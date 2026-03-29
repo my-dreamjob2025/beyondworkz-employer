@@ -195,13 +195,13 @@ const CandidateProfile = () => {
               <div className="flex items-center gap-3 text-xs">
                 <button
                   type="button"
-                  className="text-[#1447E6] font-semibold"
+                  className="text-[#2563EB] font-semibold"
                 >
                   View
                 </button>
                 <button
                   type="button"
-                  className="text-[#1447E6] font-semibold"
+                  className="text-[#2563EB] font-semibold"
                 >
                   Download
                 </button>
@@ -246,7 +246,7 @@ const CandidateProfile = () => {
               </div>
               <button
                 type="button"
-                className="w-full mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea580c]"
+                className="w-full mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#F97316] hover:bg-[#CC5705]"
               >
                 Unlock Contact (-1 Credit)
               </button>

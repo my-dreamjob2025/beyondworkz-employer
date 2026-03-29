@@ -1,18 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import useAuth from "../../hooks/useAuth";
 import { employerService } from "../../services/employerService";
-
-const COMPANY_SIZES = [
-  { value: "1-10", label: "1–10 employees" },
-  { value: "11-50", label: "11–50 employees" },
-  { value: "51-200", label: "51–200 employees" },
-  { value: "201-500", label: "201–500 employees" },
-  { value: "501-1000", label: "501–1,000 employees" },
-  { value: "1000+", label: "1,000+ employees" },
-];
-
-const EMPLOYMENT_TYPES = ["Full Time", "Part Time", "Contract", "Internship"];
-const RESPONSE_SLAS = ["Within 24 hours", "Within 3 days", "Within 1 week"];
+import {
+  EMPLOYER_COMPANY_SIZE_OPTIONS,
+  EMPLOYER_EMPLOYMENT_TYPES,
+  EMPLOYER_RESPONSE_SLAS,
+} from "../../constants/employerFormOptions";
 const emptyRecruiter = () => ({
   firstName: "",
   lastName: "",
@@ -222,7 +215,7 @@ const CompanyProfile = () => {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Enter company name"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -234,7 +227,7 @@ const CompanyProfile = () => {
                   value={industryType}
                   onChange={(e) => setIndustryType(e.target.value)}
                   placeholder="e.g. Technology, Manufacturing"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -244,9 +237,9 @@ const CompanyProfile = () => {
                 <select
                   value={companySize}
                   onChange={(e) => setCompanySize(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 >
-                  {COMPANY_SIZES.map((o) => (
+                  {EMPLOYER_COMPANY_SIZE_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
                     </option>
@@ -262,7 +255,7 @@ const CompanyProfile = () => {
                   value={headquarters}
                   onChange={(e) => setHeadquarters(e.target.value)}
                   placeholder="City, Country"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
             </div>
@@ -276,7 +269,7 @@ const CompanyProfile = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your mission, products and what makes your culture unique..."
-                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
               />
               <p className="mt-1 text-xs text-slate-400">
                 A clear description helps candidates understand why they should work with you.
@@ -302,7 +295,7 @@ const CompanyProfile = () => {
                   value={defaultJobLocation}
                   onChange={(e) => setDefaultJobLocation(e.target.value)}
                   placeholder="e.g. Pune, India"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -312,9 +305,9 @@ const CompanyProfile = () => {
                 <select
                   value={defaultEmploymentType}
                   onChange={(e) => setDefaultEmploymentType(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 >
-                  {EMPLOYMENT_TYPES.map((t) => (
+                  {EMPLOYER_EMPLOYMENT_TYPES.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
@@ -330,7 +323,7 @@ const CompanyProfile = () => {
                   value={applicationEmail}
                   onChange={(e) => setApplicationEmail(e.target.value)}
                   placeholder="talent@company.com"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -340,9 +333,9 @@ const CompanyProfile = () => {
                 <select
                   value={responseSLA}
                   onChange={(e) => setResponseSLA(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 >
-                  {RESPONSE_SLAS.map((t) => (
+                  {EMPLOYER_RESPONSE_SLAS.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
@@ -364,7 +357,7 @@ const CompanyProfile = () => {
                 aria-checked={autoArchiveInactiveJobs}
                 onClick={() => setAutoArchiveInactiveJobs((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  autoArchiveInactiveJobs ? "bg-[#1447E6]" : "bg-slate-300"
+                  autoArchiveInactiveJobs ? "bg-[#2563EB]" : "bg-slate-300"
                 }`}
               >
                 <span
@@ -392,7 +385,7 @@ const CompanyProfile = () => {
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   placeholder="https://"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -402,7 +395,7 @@ const CompanyProfile = () => {
                   value={linkedin}
                   onChange={(e) => setLinkedin(e.target.value)}
                   placeholder="https://linkedin.com/company/..."
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -412,7 +405,7 @@ const CompanyProfile = () => {
                   value={glassdoor}
                   onChange={(e) => setGlassdoor(e.target.value)}
                   placeholder="https://www.glassdoor.com/..."
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -422,7 +415,7 @@ const CompanyProfile = () => {
                   value={careersPage}
                   onChange={(e) => setCareersPage(e.target.value)}
                   placeholder="https://company.com/careers"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
             </div>
@@ -439,7 +432,7 @@ const CompanyProfile = () => {
               <button
                 type="button"
                 onClick={addRecruiter}
-                className="px-3 py-2 text-xs font-semibold text-[#1447E6] border border-[#1447E6] rounded-full hover:bg-blue-50"
+                className="px-3 py-2 text-xs font-semibold text-[#2563EB] border border-[#2563EB] rounded-full hover:bg-blue-50"
               >
                 + Add Member
               </button>
@@ -466,42 +459,42 @@ const CompanyProfile = () => {
                       value={r.firstName}
                       onChange={(e) => updateRecruiter(idx, "firstName", e.target.value)}
                       placeholder="First name"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                     <input
                       type="text"
                       value={r.lastName}
                       onChange={(e) => updateRecruiter(idx, "lastName", e.target.value)}
                       placeholder="Last name"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                     <input
                       type="text"
                       value={r.position}
                       onChange={(e) => updateRecruiter(idx, "position", e.target.value)}
                       placeholder="Position (e.g. HR Manager)"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                     <input
                       type="text"
                       value={r.contact}
                       onChange={(e) => updateRecruiter(idx, "contact", e.target.value)}
                       placeholder="Contact number"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                     <input
                       type="email"
                       value={r.email}
                       onChange={(e) => updateRecruiter(idx, "email", e.target.value)}
                       placeholder="Work email"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                     <input
                       type="url"
                       value={r.linkedin}
                       onChange={(e) => updateRecruiter(idx, "linkedin", e.target.value)}
                       placeholder="LinkedIn URL"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -513,7 +506,7 @@ const CompanyProfile = () => {
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2.5 text-sm font-semibold text-white bg-[#1447E6] rounded-full hover:bg-[#1237b5] disabled:opacity-60"
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-[#2563EB] rounded-full hover:bg-[#1248C1] disabled:opacity-60"
             >
               {saving ? "Saving…" : "Save Company Profile"}
             </button>

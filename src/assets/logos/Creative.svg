@@ -1,5 +1,5 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="48" height="48" rx="6" fill="#F1F5F9"/>
+<rect width="48" height="48" rx="6" fill="#E8E8E8"/>
 <rect x="0.5" y="0.5" width="47" height="47" rx="5.5" stroke="black" stroke-opacity="0.08"/>
 <rect width="46" height="46" transform="translate(1 1)" fill="url(#pattern0_6_160)"/>
 <defs>

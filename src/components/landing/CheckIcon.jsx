@@ -1,6 +1,6 @@
-const CheckIcon = ({ className = "w-5 h-5" }) => (
+const CheckIcon = ({ className = "" }) => (
   <svg
-    className={`${className} text-[#1447E6] flex-shrink-0`}
+    className={`h-5 w-5 flex-shrink-0 text-[#2563EB] ${className}`.trim()}
     fill="currentColor"
     viewBox="0 0 20 20"
   >

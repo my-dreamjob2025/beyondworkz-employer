@@ -1,1 +1,172 @@
 @import "tailwindcss";
+
+/**
+ * BeyondWorkz employer — colors must match design system only.
+ * Neutrals, primary (blue), secondary (orange), feedback (red / yellow / green / navy).
+ */
+@theme {
+  /* Neutrals — approved grays + white/black */
+  --color-slate-50: #ffffff;
+  --color-slate-100: #e8e8e8;
+  --color-slate-200: #d2d2d2;
+  --color-slate-300: #bbbbbb;
+  --color-slate-400: #a4a4a4;
+  --color-slate-500: #8e8e8e;
+  --color-slate-600: #777777;
+  --color-slate-700: #606060;
+  --color-slate-800: #4a4a4a;
+  --color-slate-900: #333333;
+  --color-slate-950: #2d3339;
+
+  --color-gray-50: #ffffff;
+  --color-gray-100: #e8e8e8;
+  --color-gray-200: #d2d2d2;
+  --color-gray-300: #bbbbbb;
+  --color-gray-400: #a4a4a4;
+  --color-gray-500: #8e8e8e;
+  --color-gray-600: #777777;
+  --color-gray-700: #606060;
+  --color-gray-800: #4a4a4a;
+  --color-gray-900: #333333;
+  --color-gray-950: #2d3339;
+
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #e8e8e8;
+  --color-neutral-200: #d2d2d2;
+  --color-neutral-300: #bbbbbb;
+  --color-neutral-400: #a4a4a4;
+  --color-neutral-500: #8e8e8e;
+  --color-neutral-600: #777777;
+  --color-neutral-700: #606060;
+  --color-neutral-800: #4a4a4a;
+  --color-neutral-900: #333333;
+  --color-neutral-950: #2d3339;
+
+  --color-zinc-50: #ffffff;
+  --color-zinc-100: #e8e8e8;
+  --color-zinc-200: #d2d2d2;
+  --color-zinc-300: #bbbbbb;
+  --color-zinc-400: #a4a4a4;
+  --color-zinc-500: #8e8e8e;
+  --color-zinc-600: #777777;
+  --color-zinc-700: #606060;
+  --color-zinc-800: #4a4a4a;
+  --color-zinc-900: #333333;
+  --color-zinc-950: #2d3339;
+
+  /* Primary blue */
+  --color-blue-50: #2563eb1a;
+  --color-blue-100: #b6cbf8;
+  --color-blue-200: #6e97f2;
+  --color-blue-300: #2563eb;
+  --color-blue-400: #6e97f2;
+  --color-blue-500: #2563eb;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1248c1;
+  --color-blue-800: #0d3388;
+  --color-blue-900: #0d3388;
+  --color-blue-950: #0d3388;
+
+  --color-indigo-50: #2563eb1a;
+  --color-indigo-100: #b6cbf8;
+  --color-indigo-200: #6e97f2;
+  --color-indigo-500: #2563eb;
+  --color-indigo-600: #2563eb;
+  --color-indigo-700: #1248c1;
+  --color-indigo-800: #0d3388;
+  --color-indigo-900: #0d3388;
+
+  --color-sky-50: #2563eb1a;
+  --color-sky-100: #b6cbf8;
+  --color-sky-200: #6e97f2;
+  --color-sky-500: #6e97f2;
+  --color-sky-600: #2563eb;
+  --color-sky-700: #1248c1;
+
+  /* Secondary orange */
+  --color-orange-50: #f973161a;
+  --color-orange-100: #fdd0b1;
+  --color-orange-200: #fba264;
+  --color-orange-300: #f97316;
+  --color-orange-400: #cc5705;
+  --color-orange-500: #f97316;
+  --color-orange-600: #cc5705;
+  --color-orange-700: #913d04;
+  --color-orange-800: #913d04;
+  --color-orange-900: #913d04;
+
+  /* Warning / amber → yellow tokens */
+  --color-amber-50: #ffdb431a;
+  --color-amber-100: #ffdb43;
+  --color-amber-200: #dfb400;
+  --color-amber-300: #dfb400;
+  --color-amber-400: #dfb400;
+  --color-amber-500: #dfb400;
+  --color-amber-600: #dfb400;
+  --color-amber-700: #606060;
+  --color-amber-800: #4a4a4a;
+
+  --color-yellow-50: #ffdb431a;
+  --color-yellow-100: #ffdb43;
+  --color-yellow-200: #dfb400;
+  --color-yellow-500: #ffdb43;
+  --color-yellow-600: #dfb400;
+
+  /* Success */
+  --color-emerald-50: #1fc16b1a;
+  --color-emerald-100: #84ebb4;
+  --color-emerald-200: #84ebb4;
+  --color-emerald-300: #1fc16b;
+  --color-emerald-400: #1fc16b;
+  --color-emerald-500: #1fc16b;
+  --color-emerald-600: #1fc16b;
+  --color-emerald-700: #333333;
+  --color-emerald-800: #333333;
+
+  --color-green-50: #1fc16b1a;
+  --color-green-100: #84ebb4;
+  --color-green-500: #1fc16b;
+  --color-green-600: #1fc16b;
+  --color-green-700: #333333;
+  --color-green-800: #333333;
+
+  /* Error */
+  --color-red-50: #fb37481a;
+  --color-red-100: #fb3748;
+  --color-red-200: #fb3748;
+  --color-red-300: #d00416;
+  --color-red-400: #d00416;
+  --color-red-500: #fb3748;
+  --color-red-600: #d00416;
+  --color-red-700: #d00416;
+  --color-red-800: #d00416;
+
+  --color-rose-50: #fb37481a;
+  --color-rose-100: #fb3748;
+  --color-rose-500: #fb3748;
+  --color-rose-600: #d00416;
+  --color-rose-700: #d00416;
+
+  /* Accent dots / charts */
+  --color-violet-50: #0f172a1a;
+  --color-violet-100: #375499;
+  --color-violet-200: #375499;
+  --color-violet-500: #375499;
+  --color-violet-600: #375499;
+  --color-violet-700: #0f172a;
+
+  /* Navy (dark surfaces / type) */
+  --color-black: #000000;
+
+  /* Named brand tokens for arbitrary use */
+  --color-bw-primary: #2563eb;
+  --color-bw-primary-muted: #2563eb1a;
+  --color-bw-primary-strong: #1248c1;
+  --color-bw-primary-dark: #0d3388;
+  --color-bw-secondary: #f97316;
+  --color-bw-secondary-muted: #f973161a;
+  --color-bw-navy: #0f172a;
+  --color-bw-navy-muted: #0f172a1a;
+  --color-bw-lilac: #f3e7ff;
+  --color-bw-overlay: #0000001a;
+}

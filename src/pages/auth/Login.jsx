@@ -12,7 +12,8 @@ const Login = () => {
       <section
         className="pt-24 pb-16 lg:pt-32 lg:pb-24 min-h-screen flex items-center"
         style={{
-          background: "linear-gradient(135deg, #dce8ff 0%, #eef3ff 50%, #f0f4ff 100%)",
+          background:
+            "linear-gradient(135deg, #B6CBF8 0%, #E8E8E8 50%, #FFFFFF 100%)",
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -22,7 +23,7 @@ const Login = () => {
               <span className="inline-block px-4 py-1.5 rounded-full bg-[#F97316] text-white text-sm font-semibold mb-6">
                 #1 Hiring Platform in 2026
               </span>
-              <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-[#1e3a8a] leading-tight">
+              <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-[#0D3388] leading-tight">
                 Hire the Right Talent with Beyond Workz
               </h1>
               <p className="mt-6 text-lg text-slate-600 max-w-xl">
@@ -32,13 +33,13 @@ const Login = () => {
               <div className="mt-8 flex flex-wrap gap-4">
                 <button
                   onClick={() => navigate("/register")}
-                  className="px-8 py-4 rounded-lg font-semibold text-white bg-[#1447E6] hover:opacity-90 transition-opacity"
+                  className="px-8 py-4 rounded-lg font-semibold text-white bg-[#2563EB] hover:opacity-90 transition-opacity"
                 >
                   Start Hiring
                 </button>
                 <button
                   onClick={() => navigate("/register")}
-                  className="px-8 py-4 rounded-lg font-semibold text-[#1447E6] border-2 border-[#1447E6] bg-white hover:bg-blue-50 transition-colors"
+                  className="px-8 py-4 rounded-lg font-semibold text-[#2563EB] border-2 border-[#2563EB] bg-white hover:bg-[#2563EB1A] transition-colors"
                 >
                   Post a Job
                 </button>
@@ -72,7 +73,7 @@ const Login = () => {
                   </button>
                   <button
                     type="button"
-                    className="flex-1 py-3 px-4 rounded-lg font-semibold text-sm bg-[#1447E6] text-white"
+                    className="flex-1 py-3 px-4 rounded-lg font-semibold text-sm bg-[#2563EB] text-white"
                   >
                     Register/Log In
                   </button>

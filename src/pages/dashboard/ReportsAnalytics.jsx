@@ -1,62 +1,126 @@
-const metricCards = [
-  {
-    label: "Applications Received",
-    value: "1,248",
-    delta: "+12% this month",
-    deltaColor: "text-emerald-600",
-    iconBg: "bg-blue-50",
-  },
-  {
-    label: "Profile Unlocks",
-    value: "342",
-    delta: "+5% this month",
-    deltaColor: "text-emerald-600",
-    iconBg: "bg-amber-50",
-  },
-  {
-    label: "Interviews Scheduled",
-    value: "89",
-    delta: "-2% this month",
-    deltaColor: "text-rose-600",
-    iconBg: "bg-violet-50",
-  },
-  {
-    label: "Hires Made",
-    value: "14",
-    delta: "+1% this month",
-    deltaColor: "text-emerald-600",
-    iconBg: "bg-emerald-50",
-  },
-];
+import { useEffect, useMemo, useState } from "react";
+import {
+  fetchApplicationSummary,
+  fetchRecentApplications,
+} from "../../services/applicationService";
 
-const trendPoints = [30, 55, 48, 70, 65];
+const STATUS_LABEL = {
+  submitted: "Submitted",
+  shortlisted: "Shortlisted",
+  interview_scheduled: "Interview",
+  rejected: "Rejected",
+  hired: "Hired",
+};
 
-const recentApplications = [
-  {
-    id: 1,
-    initials: "RS",
-    name: "Rahul Sharma",
-    role: "React Developer",
-    appliedDate: "20 March 2026",
-    experience: "3 Years",
-    status: "Shortlisted",
-    statusColor: "bg-emerald-50 text-emerald-700",
-  },
-  {
-    id: 2,
-    initials: "SL",
-    name: "Sarah Lin",
-    role: "Product Designer",
-    appliedDate: "19 March 2026",
-    experience: "5 Years",
-    status: "In Review",
-    statusColor: "bg-amber-50 text-amber-700",
-  },
-];
+function formatDate(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch {
+    return "—";
+  }
+}
 
 const ReportsAnalytics = () => {
+  const [summary, setSummary] = useState(null);
+  const [recentRaw, setRecentRaw] = useState([]);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoadError("");
+      try {
+        const [sum, recent] = await Promise.all([
+          fetchApplicationSummary(),
+          fetchRecentApplications(25),
+        ]);
+        if (cancelled) return;
+        if (sum.success) setSummary(sum);
+        else setLoadError(sum.message || "");
+        if (recent.success && Array.isArray(recent.items)) setRecentRaw(recent.items);
+      } catch (e) {
+        if (!cancelled) setLoadError(e.response?.data?.message || e.message || "Failed to load.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const metricCards = useMemo(() => {
+    const total = summary?.total ?? 0;
+    const by = summary?.byStatus || {};
+    const interviews = summary?.interviewsScheduled ?? 0;
+    const hired = by.hired ?? 0;
+    return [
+      {
+        label: "Applications Received",
+        value: String(total),
+        delta: `${by.submitted ?? 0} new · ${by.shortlisted ?? 0} shortlisted`,
+        deltaColor: "text-slate-500",
+        iconBg: "bg-blue-50",
+      },
+      {
+        label: "Profile Unlocks",
+        value: "0",
+        delta: "Not tracked in this version",
+        deltaColor: "text-slate-400",
+        iconBg: "bg-amber-50",
+      },
+      {
+        label: "Interviews Scheduled",
+        value: String(interviews),
+        delta: "Candidates in interview stage",
+        deltaColor: "text-slate-500",
+        iconBg: "bg-violet-50",
+      },
+      {
+        label: "Hires Made",
+        value: String(hired),
+        delta: "Marked hired in Applications",
+        deltaColor: "text-slate-500",
+        iconBg: "bg-emerald-50",
+      },
+    ];
+  }, [summary]);
+
+  const recentApplications = useMemo(() => {
+    return recentRaw.map((row) => ({
+      id: row.id,
+      initials: (row.applicantName || "?")
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+      name: row.applicantName || "—",
+      role: row.job?.title || "—",
+      appliedDate: formatDate(row.appliedAt),
+      experience: "—",
+      status: STATUS_LABEL[row.status] || row.status,
+      statusColor:
+        row.status === "hired"
+          ? "bg-emerald-50 text-emerald-800"
+          : row.status === "rejected"
+            ? "bg-red-50 text-red-800"
+            : row.status === "interview_scheduled"
+              ? "bg-violet-50 text-violet-800"
+              : row.status === "shortlisted"
+                ? "bg-blue-50 text-blue-800"
+                : "bg-slate-100 text-slate-800",
+    }));
+  }, [recentRaw]);
+
   return (
     <div className="space-y-6">
+      {loadError ? (
+        <p className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700">{loadError}</p>
+      ) : null}
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Reports &amp; Analytics</h1>
@@ -86,7 +150,7 @@ const ReportsAnalytics = () => {
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2563EB] text-sm font-semibold text-white hover:bg-[#1D4ED8]"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2563EB] text-sm font-semibold text-white hover:bg-[#1248C1]"
           >
             <svg
               className="w-4 h-4 text-white"
@@ -201,74 +265,15 @@ const ReportsAnalytics = () => {
               Last 5 Weeks
             </button>
           </div>
-          <div className="h-56">
-            <svg viewBox="0 0 320 160" className="w-full h-full">
-              <defs>
-                <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2563EB" stopOpacity="0.12" />
-                  <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <rect x="0" y="0" width="320" height="160" fill="white" />
-              {[1, 2, 3, 4].map((i) => (
-                <line
-                  key={i}
-                  x1="40"
-                  x2="300"
-                  y1={30 + i * 22}
-                  y2={30 + i * 22}
-                  stroke="#E5E7EB"
-                  strokeWidth="1"
-                />
-              ))}
-              <polyline
-                fill="url(#trendFill)"
-                stroke="none"
-                points={`40,140 40,${140 - trendPoints[0]} 100,${140 - trendPoints[1]} 160,${
-                  140 - trendPoints[2]
-                } 220,${140 - trendPoints[3]} 280,${140 - trendPoints[4]} 280,140`}
-              />
-              <polyline
-                fill="none"
-                stroke="#2563EB"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                points={`40,${140 - trendPoints[0]} 100,${140 - trendPoints[1]} 160,${
-                  140 - trendPoints[2]
-                } 220,${140 - trendPoints[3]} 280,${140 - trendPoints[4]}`}
-              />
-              {[0, 1, 2, 3, 4].map((index) => {
-                const x = 40 + index * 60;
-                const y = 140 - trendPoints[index];
-                return (
-                  <circle
-                    key={String(index)}
-                    cx={x}
-                    cy={y}
-                    r="4"
-                    fill="white"
-                    stroke="#2563EB"
-                    strokeWidth="2"
-                  />
-                );
-              })}
-              {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"].map((label, index) => {
-                const x = 40 + index * 60;
-                return (
-                  <text
-                    key={label}
-                    x={x}
-                    y={152}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#6B7280"
-                  >
-                    {label}
-                  </text>
-                );
-              })}
-            </svg>
+          <div className="h-56 flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-center text-sm text-slate-600">
+            <p className="font-semibold text-slate-800">Status breakdown</p>
+            <ul className="text-left text-xs space-y-1">
+              <li>Submitted: {summary?.byStatus?.submitted ?? 0}</li>
+              <li>Shortlisted: {summary?.byStatus?.shortlisted ?? 0}</li>
+              <li>Interview: {summary?.byStatus?.interview_scheduled ?? 0}</li>
+              <li>Rejected: {summary?.byStatus?.rejected ?? 0}</li>
+              <li>Hired: {summary?.byStatus?.hired ?? 0}</li>
+            </ul>
           </div>
         </div>
 
@@ -279,44 +284,10 @@ const ReportsAnalytics = () => {
               <p className="text-xs text-slate-500">Where your candidates are coming from.</p>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="relative w-32 h-32">
-              <svg viewBox="0 0 120 120" className="w-full h-full">
-                <circle cx="60" cy="60" r="40" fill="none" stroke="#E5E7EB" strokeWidth="10" />
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="40"
-                  fill="none"
-                  stroke="#2563EB"
-                  strokeWidth="10"
-                  strokeDasharray="220 60"
-                  strokeLinecap="round"
-                  transform="rotate(-90 60 60)"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-xs text-slate-500">100%</p>
-                <p className="text-[11px] font-medium text-slate-900">Total</p>
-              </div>
-            </div>
-            <div className="flex-1 space-y-2 text-xs">
-              {[
-                ["Job Posting", 45, "bg-blue-500"],
-                ["Database Unlock", 30, "bg-amber-500"],
-                ["Direct Application", 15, "bg-violet-500"],
-                ["Referral", 10, "bg-emerald-500"],
-              ].map(([label, value, color]) => (
-                <div key={label} className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${color}`} />
-                    <span className="text-slate-600">{label}</span>
-                  </div>
-                  <span className="font-medium text-slate-900">{value}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <p className="text-sm text-slate-500">
+            Applications currently come from the public job board only. Source attribution is not
+            recorded yet.
+          </p>
         </div>
       </section>
 
@@ -364,83 +335,87 @@ const ReportsAnalytics = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {recentApplications.map((applicant, index) => (
-                <tr key={applicant.id} className="hover:bg-slate-50">
-                  <td className="px-5 py-3 align-middle">
-                    <input
-                      type="checkbox"
-                      className="rounded border-slate-300"
-                      defaultChecked={index === 0}
-                    />
-                  </td>
-                  <td className="px-5 py-3 align-middle">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-700">
-                        {applicant.initials}
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900">{applicant.name}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 align-middle text-slate-700">{applicant.role}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">
-                    {applicant.appliedDate}
-                  </td>
-                  <td className="px-5 py-3 align-middle text-slate-700">
-                    {applicant.experience}
-                  </td>
-                  <td className="px-5 py-3 align-middle">
-                    <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${applicant.statusColor}`}
-                    >
-                      {applicant.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 align-middle">
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <button type="button" className="p-1 hover:text-slate-600">
-                        <span className="sr-only">View details</span>
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z"
-                          />
-                        </svg>
-                      </button>
-                      <button type="button" className="p-1 hover:text-slate-600">
-                        <span className="sr-only">Download CV</span>
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M8 12l4 4m0 0l4-4m-4 4V4"
-                          />
-                        </svg>
-                      </button>
-                      <button type="button" className="p-1 hover:text-slate-600">
-                        <span className="sr-only">More actions</span>
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
-                        </svg>
-                      </button>
-                    </div>
+              {recentApplications.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-sm text-slate-500">
+                    No recent applications to display.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentApplications.map((applicant) => (
+                  <tr key={applicant.id} className="hover:bg-slate-50">
+                    <td className="px-5 py-3 align-middle">
+                      <input type="checkbox" className="rounded border-slate-300" />
+                    </td>
+                    <td className="px-5 py-3 align-middle">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-700">
+                          {applicant.initials}
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900">{applicant.name}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 align-middle text-slate-700">{applicant.role}</td>
+                    <td className="px-5 py-3 align-middle text-slate-700">
+                      {applicant.appliedDate}
+                    </td>
+                    <td className="px-5 py-3 align-middle text-slate-700">
+                      {applicant.experience}
+                    </td>
+                    <td className="px-5 py-3 align-middle">
+                      <span
+                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${applicant.statusColor}`}
+                      >
+                        {applicant.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 align-middle">
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <button type="button" className="p-1 hover:text-slate-600">
+                          <span className="sr-only">View details</span>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z"
+                            />
+                          </svg>
+                        </button>
+                        <button type="button" className="p-1 hover:text-slate-600">
+                          <span className="sr-only">Download CV</span>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M8 12l4 4m0 0l4-4m-4 4V4"
+                            />
+                          </svg>
+                        </button>
+                        <button type="button" className="p-1 hover:text-slate-600">
+                          <span className="sr-only">More actions</span>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

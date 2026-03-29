@@ -13,7 +13,7 @@ const CreditsCheckout = () => {
             </div>
             <div className="h-px w-10 bg-slate-300" />
             <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[#1447E6] text-white flex items-center justify-center text-xs">
+              <span className="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-xs">
                 2
               </span>
               <span className="text-slate-900">Checkout</span>
@@ -68,7 +68,7 @@ const CreditsCheckout = () => {
                   <p>GST (18%)</p>
                   <button
                     type="button"
-                    className="mt-0.5 text-xs font-medium text-[#1447E6]"
+                    className="mt-0.5 text-xs font-medium text-[#2563EB]"
                   >
                     + Add GSTIN number
                   </button>
@@ -89,7 +89,7 @@ const CreditsCheckout = () => {
 
             <button
               type="button"
-              className="w-full mt-2 mb-4 px-4 py-3 rounded-full text-sm font-semibold text-white bg-[#22C55E] hover:bg-[#16a34a]"
+              className="w-full mt-2 mb-4 px-4 py-3 rounded-full text-sm font-semibold text-white bg-[#1FC16B] hover:opacity-90 transition-opacity"
             >
               Proceed to Pay ₹4718
             </button>

@@ -1,56 +1,51 @@
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const usageStats = [
-  { label: "Job Posts", value: 15 },
-  { label: "Contact Unlocks", value: 24 },
-  { label: "Database Downloads", value: 3 },
-];
-
-const usageHistory = [
-  {
-    date: "22 March 2026",
-    action: "Unlock Contact",
-    candidateOrJob: "Rahul Sharma",
-    credits: "-1",
-    status: "Completed",
-    statusColor: "text-emerald-700 bg-emerald-50",
-  },
-  {
-    date: "20 March 2026",
-    action: "Job Post",
-    candidateOrJob: "React Developer",
-    credits: "0",
-    status: "Failed",
-    statusColor: "text-rose-700 bg-rose-50",
-  },
-  {
-    date: "18 March 2026",
-    action: "Unlock Contact",
-    candidateOrJob: "Priya Singh",
-    credits: "-1",
-    status: "Completed",
-    statusColor: "text-emerald-700 bg-emerald-50",
-  },
-  {
-    date: "15 March 2026",
-    action: "Database Download",
-    candidateOrJob: "Frontend Candidates Q1",
-    credits: "-1",
-    status: "Completed",
-    statusColor: "text-emerald-700 bg-emerald-50",
-  },
-  {
-    date: "12 March 2026",
-    action: "Credit Purchase",
-    candidateOrJob: "Pro Pack",
-    credits: "+50",
-    status: "Completed",
-    statusColor: "text-emerald-700 bg-emerald-50",
-  },
-];
+import useAuth from "../../hooks/useAuth";
+import { fetchEmployerJobs } from "../../services/jobPostingService";
+import { fetchApplicationSummary } from "../../services/applicationService";
 
 const Credits = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [publishedJobs, setPublishedJobs] = useState(0);
+  const [applicationTotal, setApplicationTotal] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [jobsRes, sumRes] = await Promise.all([fetchEmployerJobs(), fetchApplicationSummary()]);
+        if (cancelled) return;
+        if (jobsRes.success && Array.isArray(jobsRes.jobs)) {
+          setPublishedJobs(jobsRes.jobs.filter((j) => j.status === "published").length);
+        }
+        if (sumRes.success) setApplicationTotal(sumRes.total ?? 0);
+      } catch {
+        if (!cancelled) {
+          setPublishedJobs(0);
+          setApplicationTotal(0);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const available = user?.companyProfile?.creditBalance ?? 0;
+  const used = user?.companyProfile?.creditsUsed ?? 0;
+  const purchased = user?.companyProfile?.creditsTotal ?? 0;
+
+  const usageStats = useMemo(
+    () => [
+      { label: "Published job listings", value: publishedJobs },
+      { label: "Applications received", value: applicationTotal },
+      { label: "Contact unlocks", value: 0 },
+    ],
+    [publishedJobs, applicationTotal],
+  );
+
+  const usageHistory = useMemo(() => [], []);
 
   return (
     <div className="space-y-6">
@@ -64,7 +59,7 @@ const Credits = () => {
         <button
           type="button"
           onClick={() => navigate("/dashboard/credits/checkout")}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#ea580c]"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#CC5705]"
         >
           <svg
             className="w-4 h-4 text-white"
@@ -88,23 +83,23 @@ const Credits = () => {
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
             Available Credits
           </p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">8</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">{available}</p>
         </div>
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
             Credits Used
           </p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">42</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">{used}</p>
         </div>
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
             Total Purchased
           </p>
-          <p className="mt-3 text-3xl font-semibold text-slate-900">50</p>
+          <p className="mt-3 text-3xl font-semibold text-slate-900">{purchased}</p>
         </div>
       </section>
 
-      <section className="bg-[#F5F7FF] rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5">
+      <section className="bg-[#2563EB1A] rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5">
         <div className="flex items-center gap-2 text-sm text-slate-700">
           <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-[#2563EB] text-xs font-semibold">
             i
@@ -126,7 +121,7 @@ const Credits = () => {
         </div>
       </section>
 
-      <section className="bg-[#FFF7ED] rounded-2xl border border-orange-200 shadow-sm px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+      <section className="bg-[#F973161A] rounded-2xl border border-orange-200 shadow-sm px-5 py-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-slate-900">Need More Credits?</p>
           <p className="text-xs text-slate-600 mt-0.5">
@@ -136,7 +131,7 @@ const Credits = () => {
         <button
           type="button"
           onClick={() => navigate("/dashboard/credits/checkout")}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-xs font-semibold text-white hover:bg-[#ea580c]"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-xs font-semibold text-white hover:bg-[#CC5705]"
         >
           <svg
             className="w-4 h-4 text-white"
@@ -236,29 +231,39 @@ const Credits = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {usageHistory.map((row) => (
-                <tr key={row.date + row.action} className="hover:bg-slate-50">
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.date}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.action}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">
-                    {row.candidateOrJob}
-                  </td>
-                  <td
-                    className={`px-5 py-3 align-middle font-medium ${
-                      row.credits.startsWith("+") ? "text-emerald-600" : "text-rose-600"
-                    }`}
-                  >
-                    {row.credits}
-                  </td>
-                  <td className="px-5 py-3 align-middle">
-                    <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${row.statusColor}`}
-                    >
-                      {row.status}
-                    </span>
+              {usageHistory.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-sm text-slate-500">
+                    No usage history yet.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                usageHistory.map((row) => (
+                  <tr key={row.date + row.action} className="hover:bg-slate-50">
+                    <td className="px-5 py-3 align-middle text-slate-700">{row.date}</td>
+                    <td className="px-5 py-3 align-middle text-slate-700">{row.action}</td>
+                    <td className="px-5 py-3 align-middle text-slate-700">
+                      {row.candidateOrJob}
+                    </td>
+                    <td
+                      className={`px-5 py-3 align-middle font-medium ${
+                        String(row.credits).startsWith("+")
+                          ? "text-emerald-600"
+                          : "text-rose-600"
+                      }`}
+                    >
+                      {row.credits}
+                    </td>
+                    <td className="px-5 py-3 align-middle">
+                      <span
+                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${row.statusColor}`}
+                      >
+                        {row.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -1,14 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import useAuth from "../../hooks/useAuth";
 import { employerService } from "../../services/employerService";
-
-const TIMEZONES = [
-  { value: "Asia/Kolkata", label: "(UTC+05:30) India Standard Time" },
-  { value: "UTC", label: "(UTC+00:00) GMT" },
-  { value: "America/New_York", label: "(UTC-05:00) Eastern Time" },
-  { value: "Europe/London", label: "(UTC+00:00) London" },
-  { value: "Asia/Singapore", label: "(UTC+08:00) Singapore" },
-];
+import { EMPLOYER_TIMEZONE_OPTIONS } from "../../constants/employerFormOptions";
 
 const UserProfile = () => {
   const { updateUserFields } = useAuth();
@@ -125,7 +118,7 @@ const UserProfile = () => {
 
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#1447E6] flex items-center justify-center text-white font-semibold text-xl">
+              <div className="w-16 h-16 rounded-full bg-[#2563EB] flex items-center justify-center text-white font-semibold text-xl">
                 {initials}
               </div>
               <div className="flex-1">
@@ -148,7 +141,7 @@ const UserProfile = () => {
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -159,7 +152,7 @@ const UserProfile = () => {
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -171,7 +164,7 @@ const UserProfile = () => {
                       value={jobTitle}
                       onChange={(e) => setJobTitle(e.target.value)}
                       placeholder="e.g. HR Manager, Talent Lead"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -183,7 +176,7 @@ const UserProfile = () => {
                       value={department}
                       onChange={(e) => setDepartment(e.target.value)}
                       placeholder="e.g. Human Resources"
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -194,7 +187,7 @@ const UserProfile = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-4 py-2.5 text-sm font-semibold text-white bg-[#1447E6] rounded-full hover:bg-[#1237b5] disabled:opacity-60"
+                className="px-4 py-2.5 text-sm font-semibold text-white bg-[#2563EB] rounded-full hover:bg-[#1248C1] disabled:opacity-60"
               >
                 {saving ? "Saving…" : "Save Changes"}
               </button>
@@ -233,7 +226,7 @@ const UserProfile = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+91 or international format"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -245,7 +238,7 @@ const UserProfile = () => {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="City"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <div>
@@ -255,9 +248,9 @@ const UserProfile = () => {
                 <select
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 >
-                  {TIMEZONES.map((tz) => (
+                  {EMPLOYER_TIMEZONE_OPTIONS.map((tz) => (
                     <option key={tz.value} value={tz.value}>
                       {tz.label}
                     </option>

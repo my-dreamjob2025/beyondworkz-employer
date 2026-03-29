@@ -20,7 +20,7 @@ const Settings = () => {
             <input
               type="email"
               placeholder="company@example.com"
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
             />
           </div>
           <div>
@@ -28,7 +28,7 @@ const Settings = () => {
               <input
                 type="checkbox"
                 defaultChecked
-                className="accent-[#1447E6]"
+                className="accent-[#2563EB]"
               />
               <span className="text-sm text-slate-700">
                 Email me when I receive new applications
@@ -37,7 +37,7 @@ const Settings = () => {
           </div>
           <div>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="accent-[#1447E6]" />
+              <input type="checkbox" className="accent-[#2563EB]" />
               <span className="text-sm text-slate-700">
                 Weekly digest of job performance
               </span>

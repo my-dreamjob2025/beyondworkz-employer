@@ -10,7 +10,7 @@ const PageNotFound = () => {
       <button
         onClick={() => navigate("/dashboard")}
         className="mt-6 px-6 py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
-        style={{ backgroundColor: "#1447E6" }}
+        style={{ backgroundColor: "#2563EB" }}
       >
         Back to Dashboard
       </button>

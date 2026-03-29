@@ -1,45 +1,18 @@
 import { useNavigate } from "react-router-dom";
-
-const creditPlans = [
-  {
-    name: "Starter Pack",
-    credits: 10,
-    price: "₹999",
-    posts: "Post 10 Jobs",
-    unlock: "Unlock 10 Candidates",
-  },
-  {
-    name: "Growth Pack",
-    credits: 50,
-    price: "₹4499",
-    posts: "Post 50 Jobs",
-    unlock: "Unlock 50 Candidates",
-    support: "Priority Support",
-    badge: "Most Popular",
-    highlight: true,
-  },
-  {
-    name: "Business Pack",
-    credits: 200,
-    price: "₹14999",
-    posts: "Post 200 Jobs",
-    unlock: "Unlock 200 Candidates",
-    support: "Dedicated Support",
-  },
-];
-
-const paymentHistory = [
-  {
-    date: "22 March 2026",
-    packageName: "Growth Pack",
-    credits: 50,
-    amount: "₹4499",
-    status: "Successful",
-  },
-];
+import useAuth from "../../hooks/useAuth";
+import { EMPLOYER_CREDIT_PACKS } from "../../constants/employerCommerce";
 
 const Billing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const company = user?.companyProfile;
+  const companyName = company?.companyDetails?.companyName || "—";
+  const billingEmail =
+    company?.hiringPreferences?.applicationEmail || user?.email || "—";
+  const addr = company?.address;
+  const addressLine = [addr?.addressLine1, addr?.city, addr?.country]
+    .filter(Boolean)
+    .join(", ") || "—";
 
   return (
     <div className="space-y-6">
@@ -53,7 +26,7 @@ const Billing = () => {
         <button
           type="button"
           onClick={() => navigate("/dashboard/credits/buy")}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#ea580c]"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#CC5705]"
         >
           <svg
             className="w-4 h-4"
@@ -101,7 +74,7 @@ const Billing = () => {
             <p className="font-medium text-slate-500 uppercase tracking-wide mb-1">
               Company Name
             </p>
-            <p className="text-slate-900">Acme Corp Ltd.</p>
+            <p className="text-slate-900">{companyName}</p>
           </div>
           <div>
             <p className="font-medium text-slate-500 uppercase tracking-wide mb-1">GSTIN</p>
@@ -111,17 +84,17 @@ const Billing = () => {
             <p className="font-medium text-slate-500 uppercase tracking-wide mb-1">
               Billing Email
             </p>
-            <p className="text-slate-900">billing@acmecorp.com</p>
+            <p className="text-slate-900">{billingEmail}</p>
           </div>
           <div>
             <p className="font-medium text-slate-500 uppercase tracking-wide mb-1">
               Company Address
             </p>
-            <p className="text-slate-900">123 Tech Park, Bangalore, India</p>
+            <p className="text-slate-900">{addressLine}</p>
           </div>
         </div>
 
-        <div className="mt-2 rounded-xl border border-amber-200 bg-[#FFFBEB] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="mt-2 rounded-xl border border-amber-200 bg-[#FFDB431A] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-slate-700">
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-500 text-[11px] font-semibold">
               !
@@ -142,9 +115,9 @@ const Billing = () => {
           <h2 className="text-sm font-semibold text-slate-900">Credit Purchase Plans</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {creditPlans.map((plan) => (
+          {EMPLOYER_CREDIT_PACKS.map((plan) => (
             <div
-              key={plan.name}
+              key={plan.id}
               className={`relative bg-white rounded-2xl border p-6 shadow-sm flex flex-col ${
                 plan.highlight ? "border-[#2563EB]" : "border-slate-200"
               }`}
@@ -178,8 +151,8 @@ const Billing = () => {
                 onClick={() => navigate("/dashboard/credits/checkout")}
                 className={`mt-6 px-4 py-2.5 rounded-full text-sm font-semibold ${
                   plan.highlight
-                    ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
-                    : "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
+                    ? "bg-[#2563EB] text-white hover:bg-[#1248C1]"
+                    : "bg-[#2563EB] text-white hover:bg-[#1248C1]"
                 }`}
               >
                 Buy Credits
@@ -245,29 +218,15 @@ const Billing = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {paymentHistory.map((row) => (
-                <tr key={row.date + row.packageName} className="hover:bg-slate-50">
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.date}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.packageName}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.credits}</td>
-                  <td className="px-5 py-3 align-middle text-slate-700">{row.amount}</td>
-                  <td className="px-5 py-3 align-middle">
-                    <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-                      {row.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 align-middle text-xs text-slate-500">
-                    <button type="button" className="underline hover:text-slate-700">
-                      Download Invoice
-                    </button>
-                  </td>
-                  <td className="px-5 py-3 align-middle text-xs text-slate-500">
-                    <button type="button" className="underline hover:text-slate-700">
-                      View Receipt
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              <tr>
+                <td
+                  colSpan={7}
+                  className="px-5 py-12 text-center text-sm text-slate-500"
+                >
+                  No payment history yet. Purchases will appear here after checkout is
+                  connected.
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

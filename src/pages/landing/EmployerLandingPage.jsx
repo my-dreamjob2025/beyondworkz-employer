@@ -18,7 +18,7 @@ const EmployerLandingPage = () => {
     <div className="min-h-screen bg-white">
       <EmployerLandingHeader />
 
-      <main>
+      <main className="pt-14 sm:pt-16">
         <HeroSection />
         <TrustedBySection />
         <FeaturesSection />

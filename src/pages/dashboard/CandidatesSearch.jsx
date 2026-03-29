@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const CandidatesSearch = () => {
   return (
     <div className="space-y-6">
@@ -7,9 +9,19 @@ const CandidatesSearch = () => {
             Search Candidates
           </h1>
           <p className="text-slate-600 mt-1">
-            Find the right candidates from our talent pool using filters.
+            Talent-pool search is not connected to the backend yet—the form below is a layout preview only.
+            Use{" "}
+            <Link to="/dashboard/applicants" className="text-[#2563EB] font-medium hover:underline">
+              Applications
+            </Link>{" "}
+            for real applicants.
           </p>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
+        No live search results are returned until a candidate database API exists. The Search button is
+        disabled so we do not imply fake data.
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)] gap-6">
@@ -24,7 +36,7 @@ const CandidatesSearch = () => {
                     type="button"
                     className={`px-4 py-1.5 text-xs md:text-sm rounded-full font-medium ${
                       idx === 2
-                        ? "bg-[#1447E6] text-white shadow-sm"
+                        ? "bg-[#2563EB] text-white shadow-sm"
                         : "text-slate-600 hover:bg-white"
                     }`}
                   >
@@ -42,7 +54,7 @@ const CandidatesSearch = () => {
                 <input
                   type="text"
                   placeholder="Enter job title, skills, or role"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
 
@@ -51,7 +63,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Current City / Region
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Select location</option>
                   </select>
                 </div>
@@ -59,7 +71,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Last Active
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Last 30 Days</option>
                   </select>
                 </div>
@@ -70,7 +82,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Experience (Min)
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Any</option>
                   </select>
                 </div>
@@ -78,7 +90,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Experience (Max)
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Any</option>
                   </select>
                 </div>
@@ -89,7 +101,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Expected Salary (Min)
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Any</option>
                   </select>
                 </div>
@@ -97,7 +109,7 @@ const CandidatesSearch = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Expected Salary (Max)
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent">
+                  <select className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent">
                     <option>Any</option>
                   </select>
                 </div>
@@ -115,7 +127,7 @@ const CandidatesSearch = () => {
                         type="button"
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
                           label === "Graduate"
-                            ? "bg-[#1447E6] text-white border-[#1447E6]"
+                            ? "bg-[#2563EB] text-white border-[#2563EB]"
                             : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -136,7 +148,9 @@ const CandidatesSearch = () => {
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-[#1447E6] hover:bg-[#1237b5]"
+                disabled
+                title="Search is not connected to the API yet."
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-400 cursor-not-allowed opacity-90"
               >
                 <svg
                   className="w-4 h-4"
@@ -169,7 +183,7 @@ const CandidatesSearch = () => {
             </p>
             <button
               type="button"
-              className="mt-4 px-4 py-2.5 rounded-full text-sm font-semibold text-[#F97316] border border-[#FED7AA] bg-[#FFF7ED]"
+              className="mt-4 px-4 py-2.5 rounded-full text-sm font-semibold text-[#F97316] border border-[#FDD0B1] bg-[#F973161A]"
             >
               Buy Credits
             </button>

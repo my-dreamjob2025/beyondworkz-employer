@@ -154,7 +154,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 required
               />
             </div>
@@ -168,7 +168,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
             <button
               type="submit"
               disabled={loading || !email}
-              className="w-full py-4 rounded-lg font-semibold text-white bg-[#1447E6] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-lg font-semibold text-white bg-[#2563EB] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -190,7 +190,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
 
           <p className="mt-4 text-center text-sm text-slate-600">
             New to Beyond Workz?{" "}
-            <Link to="/register" className="font-semibold text-[#1447E6] hover:underline">
+            <Link to="/register" className="font-semibold text-[#2563EB] hover:underline">
               Create an employer account
             </Link>
           </p>
@@ -228,7 +228,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
                   onChange={(e) => handleOTPChange(index, e.target.value)}
                   onKeyDown={(e) => handleOTPKeyDown(index, e)}
                   onPaste={handleOTPPaste}
-                  className="w-12 h-12 text-center text-xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#1447E6] focus:ring-2 focus:ring-[#1447E6] placeholder:text-slate-300"
+                  className="w-12 h-12 text-center text-xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB] placeholder:text-slate-300"
                   placeholder="0"
                 />
               ))}
@@ -243,7 +243,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
             <button
               type="submit"
               disabled={loading || otp.join("").length !== 6}
-              className="w-full py-4 rounded-lg font-semibold text-white bg-[#1447E6] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-lg font-semibold text-white bg-[#2563EB] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -269,7 +269,7 @@ const EmployerLoginForm = ({ noCard = false }) => {
               type="button"
               onClick={handleResendOTP}
               disabled={resendCooldown > 0}
-              className="text-[#1447E6] font-medium hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+              className="text-[#2563EB] font-medium hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
             >
               {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : "Resend OTP"}
             </button>

@@ -5,51 +5,47 @@ export const NAV_LINKS = [
   { label: "Resources", href: "#" },
 ];
 
-export const TRUSTED_COMPANIES = [
-  { name: "Acme Corp", icon: "⬡" },
-  { name: "Globex", icon: "△" },
-  { name: "Soylent", icon: "○" },
-  { name: "Initech", icon: "□" },
-  { name: "Stark Ind", icon: "★" },
-];
-
 export const FEATURES = [
   {
     title: "Job Posting",
-    desc: "Distribute your open roles across 100+ job boards with a single click and reach active job seekers instantly.",
-    icon: "📁",
+    desc: "Create and publish roles from your employer dashboard and manage drafts, live listings, and closed jobs in one place.",
   },
   {
     title: "Smart Candidate Search",
-    desc: "Leverage AI-powered matching to discover passive candidates that perfectly align with your requirements.",
-    icon: "🔍",
+    desc: "Search and filter applicants using the data they share on the platform so you can focus on relevant profiles.",
   },
   {
     title: "Assisted Hiring",
-    desc: "Get dedicated support from our expert recruiters who help you shortlist the top 5% of applicants.",
-    icon: "👥",
+    desc: "Work through your pipeline with clear application statuses and interview stages as your team adopts the product.",
   },
   {
     title: "Employer Branding",
     desc: "Showcase your company culture with premium career pages that convert visitors into applicants.",
-    icon: "🏅",
   },
   {
     title: "Skill Assessments",
     desc: "Validate candidate capabilities automatically with our built-in coding and behavioral assessment tools.",
-    icon: "✓",
   },
   {
     title: "ATS Integration",
     desc: "Seamlessly connect with your existing Applicant Tracking System like Workday, Greenhouse, or Lever.",
-    icon: "📄",
   },
 ];
 
-export const METRICS = [
-  { value: "10k+", label: "Active Jobs Posted" },
-  { value: "5k+", label: "Verified Recruiters" },
-  { value: "80k+", label: "Monthly Applications" },
+/** Product value props — no placeholder market statistics. */
+export const VALUE_HIGHLIGHTS = [
+  {
+    title: "Your live pipeline",
+    desc: "See credits, postings, and applicants tied to your company account instead of demo numbers.",
+  },
+  {
+    title: "Structured applications",
+    desc: "Track submitted, shortlisted, interview, and outcome states as your team updates each candidate.",
+  },
+  {
+    title: "Room to grow",
+    desc: "Start with the workflows you use today; integrations and distribution can be discussed as you scale.",
+  },
 ];
 
 export const SKILLS = [
@@ -71,11 +67,11 @@ export const SKILLS = [
 export const FAQS = [
   {
     q: "Can I integrate Beyond Workz with my current ATS?",
-    a: "Yes, we offer native integrations with over 40 leading Applicant Tracking Systems including Workday, Greenhouse, Lever, and SmartRecruiters.",
+    a: "ATS and HRIS integrations depend on your stack and roadmap. Tell us which systems you use and we can outline what is feasible for your rollout.",
   },
   {
-    q: "How does the Smart Candidate Search work?",
-    a: "Our AI-powered search analyzes candidate profiles, skills, and experience to match them with your job requirements. You can filter by location, experience level, and more.",
+    q: "How does candidate search work?",
+    a: "You search and filter job seekers who have profiles on Beyond Workz using the fields they have chosen to share, such as role, skills, and location.",
   },
   {
     q: "Do you offer specialized talent pools for remote workers?",
@@ -87,12 +83,10 @@ export const FAQS = [
   },
 ];
 
-export const WORKFLOW_STEPS = ["SOURCING", "SCREENING", "INTERVIEW", "OFFERING"];
-
 export const WORKFLOW_BULLETS = [
-  "Reduce time-to-hire by 40%",
-  "Automated interview reminders",
-  "Custom hiring pipelines",
+  "Clear stages from application to decision",
+  "Interview and status updates in one place",
+  "Pipelines you can align with your internal process",
 ];
 
 export const EMPLOYER_BRAND_BULLETS = [

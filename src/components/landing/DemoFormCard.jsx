@@ -34,7 +34,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
         <div className="flex gap-2 mb-6">
           <button
             type="button"
-            className="flex-1 py-3 px-4 rounded-lg font-semibold text-sm bg-[#1447E6] text-white"
+            className="flex-1 py-3 px-4 rounded-lg font-semibold text-sm bg-[#2563EB] text-white"
           >
             Request a Free Demo
           </button>
@@ -63,7 +63,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
             value={formData.fullName}
             onChange={handleChange}
             placeholder="e.g. Jane Doe"
-            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
           />
         </div>
 
@@ -77,7 +77,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
             value={formData.workEmail}
             onChange={handleChange}
             placeholder="jane@company.com"
-            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
           />
         </div>
 
@@ -90,7 +90,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
               name="phoneCountryCode"
               value={formData.phoneCountryCode}
               onChange={handleChange}
-              className="w-[78px] px-3 py-3 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent text-sm font-medium"
+              className="w-[78px] px-3 py-3 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent text-sm font-medium"
             >
               {COUNTRY_CODES.map((code) => (
                 <option key={code} value={code}>
@@ -104,7 +104,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="(555) 000-0000"
-              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+              className="flex-1 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
               value={formData.company}
               onChange={handleChange}
               placeholder="Company Name"
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
             />
           </div>
 
@@ -132,7 +132,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
               name="companySize"
               value={formData.companySize}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent bg-white"
+              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white"
             >
               <option value="1-10">1-10</option>
               <option value="11-50">11-50</option>
@@ -145,7 +145,7 @@ const DemoFormCard = ({ onSubmit, hideTabs = false }) => {
 
         <button
           type="submit"
-          className="w-full py-4 rounded-xl font-semibold text-white bg-[#1447E6] hover:opacity-90 transition-opacity"
+          className="w-full py-4 rounded-xl font-semibold text-white bg-[#2563EB] hover:opacity-90 transition-opacity"
         >
           Request Demo
         </button>

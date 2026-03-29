@@ -1,35 +1,9 @@
-const unlocked = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    title: "React Developer",
-    location: "Pune",
-    lastActive: "2 days ago",
-    phone: "+91 9876543210",
-    email: "rahul.sharma@email.com",
-    experience: "3 Years",
-    expectedSalary: "₹6 LPA",
-    topSkills: ["React", "Node.js", "MongoDB"],
-    status: "Interview Scheduled (22 Mar | 11:30 AM)",
-    unlockedAgo: "1 day ago",
-  },
-  {
-    id: 2,
-    name: "Priya Patel",
-    title: "Frontend Engineer",
-    location: "Bangalore",
-    lastActive: "5 hours ago",
-    phone: "+91 9123456780",
-    email: "priya.patel@email.com",
-    experience: "5 Years",
-    expectedSalary: "₹12 LPA",
-    topSkills: ["Vue.js", "JavaScript", "Tailwind"],
-    status: "Hired",
-    unlockedAgo: "3 days ago",
-  },
-];
+import { useMemo, useState } from "react";
 
 const CandidatesUnlocked = () => {
+  const [selectedCount] = useState(0);
+  const unlocked = useMemo(() => [], []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -38,7 +12,8 @@ const CandidatesUnlocked = () => {
             Unlocked Candidates
           </h1>
           <p className="text-slate-600 mt-1">
-            Candidates whose contact details you have unlocked.
+            Contact unlocks are not tracked in the API yet—use Applications for candidate contact details
+            you already have from applicants.
           </p>
         </div>
         <div className="flex items-center gap-3 text-sm">
@@ -50,7 +25,7 @@ const CandidatesUnlocked = () => {
           </button>
           <button
             type="button"
-            className="px-4 py-2 rounded-full text-white bg-[#1447E6] hover:bg-[#1237b5]"
+            className="px-4 py-2 rounded-full text-white bg-[#2563EB] hover:bg-[#1248C1]"
           >
             Download Data
           </button>
@@ -77,7 +52,7 @@ const CandidatesUnlocked = () => {
             <input
               type="text"
               placeholder="Search by name, skill, or job role"
-              className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+              className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -113,47 +88,51 @@ const CandidatesUnlocked = () => {
         </div>
 
         {/* Bulk actions */}
-        <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-wrap items-center justify-between gap-3 text-sm">
-          <p className="text-slate-600">
-            <span className="font-semibold">1</span> Candidate Selected
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
-            >
-              Download Contacts
-            </button>
-            <button
-              type="button"
-              className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
-            >
-              Send Bulk Message
-            </button>
-            <button
-              type="button"
-              className="px-3 py-2 rounded-full bg-[#1447E6] text-white text-xs md:text-sm font-semibold hover:bg-[#1237b5]"
-            >
-              Schedule Interviews
-            </button>
+        {selectedCount > 0 && (
+          <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-wrap items-center justify-between gap-3 text-sm">
+            <p className="text-slate-600">
+              <span className="font-semibold">{selectedCount}</span> Candidate Selected
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
+              >
+                Download Contacts
+              </button>
+              <button
+                type="button"
+                className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
+              >
+                Send Bulk Message
+              </button>
+              <button
+                type="button"
+                className="px-3 py-2 rounded-full bg-[#2563EB] text-white text-xs md:text-sm font-semibold hover:bg-[#1248C1]"
+              >
+                Schedule Interviews
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Candidate cards */}
       <div className="space-y-4">
-        {unlocked.map((c, idx) => (
+        {unlocked.length === 0 ? (
+          <div className="bg-white rounded-xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-600">
+            <p className="font-medium text-slate-900">No unlocked contacts</p>
+            <p className="mt-2">Unlock candidate contacts from search or saved lists to see them here.</p>
+          </div>
+        ) : (
+          unlocked.map((c, idx) => (
           <div
             key={c.id}
             className="bg-white rounded-xl border border-slate-200 shadow-sm p-5"
           >
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  className="mt-2 rounded border-slate-300"
-                  defaultChecked={idx === 0}
-                />
+                <input type="checkbox" className="mt-2 rounded border-slate-300" />
                 <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
                   {c.name
                     .split(" ")
@@ -173,7 +152,7 @@ const CandidatesUnlocked = () => {
               <span
                 className={`px-3 py-1 rounded-full text-[11px] font-medium ${
                   idx === 0
-                    ? "bg-blue-50 text-[#1447E6]"
+                    ? "bg-blue-50 text-[#2563EB]"
                     : "bg-emerald-50 text-emerald-700"
                 }`}
               >
@@ -241,14 +220,15 @@ const CandidatesUnlocked = () => {
                 </button>
                 <button
                   type="button"
-                  className="px-4 py-2 rounded-full bg-[#1447E6] text-white hover:bg-[#1237b5]"
+                  className="px-4 py-2 rounded-full bg-[#2563EB] text-white hover:bg-[#1248C1]"
                 >
                   {idx === 0 ? "Call Candidate" : "Schedule Interview"}
                 </button>
               </div>
             </div>
           </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

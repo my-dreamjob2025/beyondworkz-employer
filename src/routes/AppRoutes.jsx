@@ -56,7 +56,12 @@ const HomeRoute = () => {
 
 const AppRoutes = () => {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthInitializer>
         <Routes>
           <Route path="/" element={<HomeRoute />} />
@@ -94,6 +99,14 @@ const AppRoutes = () => {
             <Route path="jobs" element={<JobPostings />} />
             <Route
               path="jobs/new"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <PostNewJob />
+                </Suspense>
+              }
+            />
+            <Route
+              path="jobs/:jobId/edit"
               element={
                 <Suspense fallback={<PageLoader />}>
                   <PostNewJob />

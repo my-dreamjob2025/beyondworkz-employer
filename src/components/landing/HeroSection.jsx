@@ -12,7 +12,7 @@ const HeroSection = () => {
       className="min-h-screen flex items-center py-16 px-4 sm:px-6 lg:px-20"
       style={{
         background:
-          "linear-gradient(135deg, #dce8ff 0%, #eef3ff 50%, #f0f4ff 100%)",
+          "linear-gradient(135deg, #B6CBF8 0%, #E8E8E8 50%, #FFFFFF 100%)",
         fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
       }}
     >
@@ -24,8 +24,8 @@ const HeroSection = () => {
             style={{
               display: "inline-flex",
               alignItems: "center",
-              backgroundColor: "#f97316",
-              color: "#fff",
+              backgroundColor: "#F97316",
+              color: "#FFFFFF",
               borderRadius: "999px",
               padding: "8px 20px",
               fontSize: "14px",
@@ -42,7 +42,7 @@ const HeroSection = () => {
               fontSize: "clamp(40px, 5vw, 58px)",
               fontWeight: 800,
               lineHeight: 1.1,
-              color: "#0f172a",
+              color: "#0F172A",
               margin: "0 0 20px 0",
               letterSpacing: "-1px",
             }}
@@ -54,7 +54,7 @@ const HeroSection = () => {
           <p
             style={{
               fontSize: "16px",
-              color: "#64748b",
+              color: "#8E8E8E",
               lineHeight: 1.7,
               margin: "0 0 36px 0",
               maxWidth: "420px",
@@ -68,8 +68,8 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-7">
             <button
               style={{
-                backgroundColor: "#2563eb",
-                color: "#fff",
+                backgroundColor: "#2563EB",
+                color: "#FFFFFF",
                 border: "none",
                 borderRadius: "999px",
                 padding: "14px 28px",
@@ -78,8 +78,8 @@ const HeroSection = () => {
                 cursor: "pointer",
                 transition: "background 0.2s",
               }}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#1d4ed8")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#2563eb")}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#1248C1")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#2563EB")}
               onClick={() => navigate("/register")}
             >
               Start Hiring
@@ -89,8 +89,8 @@ const HeroSection = () => {
               onClick={() => navigate("/register")}
               style={{
                 backgroundColor: "transparent",
-                color: "#0f172a",
-                border: "2px solid #1447E6",
+                color: "#0F172A",
+                border: "2px solid #2563EB",
                 borderRadius: "999px",
                 padding: "13px 28px",
                 fontSize: "15px",
@@ -99,11 +99,11 @@ const HeroSection = () => {
                 transition: "border-color 0.2s",
               }}
               onMouseEnter={(e) => {
-                e.target.style.borderColor = "#1447E6";
-                e.target.style.backgroundColor = "#EEF2FF";
+                e.target.style.borderColor = "#2563EB";
+                e.target.style.backgroundColor = "#2563EB1A";
               }}
               onMouseLeave={(e) => {
-                e.target.style.borderColor = "#1447E6";
+                e.target.style.borderColor = "#2563EB";
                 e.target.style.backgroundColor = "transparent";
               }}
             >
@@ -120,7 +120,7 @@ const HeroSection = () => {
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
-                  color: "#64748b",
+                  color: "#8E8E8E",
                   fontSize: "13px",
                 }}
               >
@@ -129,7 +129,7 @@ const HeroSection = () => {
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#64748b"
+                  stroke="#8E8E8E"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -144,13 +144,13 @@ const HeroSection = () => {
         </div>
 
         {/* RIGHT SIDE — Form Card */}
-        <div className="w-full mx-auto lg:mx-0 lg:flex-1 lg:max-w-[500px] bg-white rounded-[20px] p-8 shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
+        <div className="w-full mx-auto lg:mx-0 lg:flex-1 lg:max-w-[500px] bg-white rounded-[20px] p-8 shadow-[0_8px_40px_#0000001a]">
           {/* Tab Toggle */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              backgroundColor: "#f1f5f9",
+              backgroundColor: "#E8E8E8",
               borderRadius: "999px",
               padding: "4px",
               marginBottom: "24px",
@@ -174,8 +174,8 @@ const HeroSection = () => {
                   fontWeight: 600,
                   transition: "all 0.2s",
                   backgroundColor:
-                    activeTab === tab.id ? "#2563eb" : "transparent",
-                  color: activeTab === tab.id ? "#fff" : "#64748b",
+                    activeTab === tab.id ? "#2563EB" : "transparent",
+                  color: activeTab === tab.id ? "#FFFFFF" : "#8E8E8E",
                 }}
               >
                 {tab.label}

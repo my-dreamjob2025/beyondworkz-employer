@@ -37,6 +37,34 @@ export const clearTokens = () => {
   clearRefreshToken();
 };
 
+/** One refresh at a time — avoids parallel 401s each calling /auth/refresh and racing. */
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  if (refreshPromise) return refreshPromise;
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    return null;
+  }
+  refreshPromise = axios
+    .post(`${BASE_URL}/auth/refresh`, {
+      refreshToken,
+      panel: PANEL,
+    })
+    .then(({ data }) => {
+      if (data?.success && data.accessToken) {
+        setAccessToken(data.accessToken);
+        return data.accessToken;
+      }
+      return null;
+    })
+    .catch(() => null)
+    .finally(() => {
+      refreshPromise = null;
+    });
+  return refreshPromise;
+}
+
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -65,25 +93,14 @@ api.interceptors.response.use(
       !originalRequest.url?.includes("/auth/logout")
     ) {
       originalRequest._retry = true;
-      const refreshToken = getRefreshToken();
 
-      if (refreshToken) {
-        try {
-          const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {
-            refreshToken,
-            panel: PANEL,
-          });
-          if (data.success && data.accessToken) {
-            setAccessToken(data.accessToken);
-            originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-            return api(originalRequest);
-          }
-        } catch {
-          clearTokens();
-        }
-      } else {
-        clearAccessToken();
+      const newAccess = await refreshAccessToken();
+      if (newAccess) {
+        originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+        return api(originalRequest);
       }
+
+      clearTokens();
     }
 
     return Promise.reject(error);

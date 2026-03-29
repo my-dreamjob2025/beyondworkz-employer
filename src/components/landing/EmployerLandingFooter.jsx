@@ -1,4 +1,5 @@
-import logo from "../../assets/logos/beyondworkzlogo.png";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
+import { BrandWordmark } from "../brand/BrandMark";
 import { FOOTER_LINKS } from "../../data/landingPageData";
 
 const EmployerLandingFooter = () => {
@@ -7,9 +8,13 @@ const EmployerLandingFooter = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-4 gap-12">
           <div>
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="Beyond Workz" className="h-8 w-auto brightness-0 invert" />
-              <span className="text-lg font-bold">Beyond Workz</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <img
+                src={brandLogo}
+                alt=""
+                className="h-12 w-auto max-w-[120px] shrink-0 object-contain object-left brightness-0 invert"
+              />
+              <BrandWordmark variant="footerDark" />
             </div>
             <p className="mt-4 text-slate-400 text-sm leading-relaxed">
               Connecting great talent with great opportunities. Built for the modern workforce,

@@ -1,38 +1,20 @@
-const mockSaved = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    title: "React Developer",
-    location: "Pune",
-    lastActive: "2 days ago",
-    experience: "3 Years",
-    expectedSalary: "₹6 LPA",
-    education: "B.Tech",
-    skills: ["React", "Node.js", "MongoDB"],
-    savedAgo: "3 days ago",
-  },
-  {
-    id: 2,
-    name: "Anjali Desai",
-    title: "Frontend Engineer",
-    location: "Bangalore",
-    lastActive: "1 day ago",
-    experience: "4 Years",
-    expectedSalary: "₹12 LPA",
-    education: "MCA",
-    skills: ["Vue.js", "JavaScript", "Tailwind"],
-    savedAgo: "5 days ago",
-  },
-];
+import { useMemo, useState } from "react";
+import useAuth from "../../hooks/useAuth";
 
 const CandidatesSaved = () => {
+  const { user } = useAuth();
+  const [selectedCount] = useState(0);
+  const saved = useMemo(() => [], []);
+  const creditsRemaining = user?.companyProfile?.creditBalance ?? 0;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Saved Candidates</h1>
           <p className="text-slate-600 mt-1">
-            Review and manage candidates you saved for later.
+            Saved profiles are not stored in the platform yet—this list stays empty until that feature is
+            built.
           </p>
         </div>
         <div className="flex items-center gap-3 text-sm">
@@ -73,12 +55,12 @@ const CandidatesSaved = () => {
                 <input
                   type="text"
                   placeholder="Search by name, skill, or job role"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                 />
               </div>
               <button
                 type="button"
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#1447E6] hover:bg-[#1237b5]"
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#2563EB] hover:bg-[#1248C1]"
               >
                 Search
               </button>
@@ -112,46 +94,50 @@ const CandidatesSaved = () => {
           </div>
 
           {/* Bulk actions */}
-          <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-wrap items-center justify-between gap-3 text-sm">
-            <p className="text-slate-600">
-              <span className="font-semibold">1</span> Candidate Selected
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
-              >
-                Shortlist Candidates
-              </button>
-              <button
-                type="button"
-                className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
-              >
-                Unlock Contacts
-              </button>
-              <button
-                type="button"
-                className="px-3 py-2 rounded-full border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 text-xs md:text-sm"
-              >
-                Remove from Saved
-              </button>
+          {selectedCount > 0 && (
+            <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-wrap items-center justify-between gap-3 text-sm">
+              <p className="text-slate-600">
+                <span className="font-semibold">{selectedCount}</span> Candidate Selected
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
+                >
+                  Shortlist Candidates
+                </button>
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs md:text-sm"
+                >
+                  Unlock Contacts
+                </button>
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-full border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 text-xs md:text-sm"
+                >
+                  Remove from Saved
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Candidate cards */}
           <div className="space-y-4">
-            {mockSaved.map((c, index) => (
+            {saved.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-600">
+                <p className="font-medium text-slate-900">No saved candidates</p>
+                <p className="mt-2">Saved profiles will appear here when you add them from search.</p>
+              </div>
+            ) : (
+              saved.map((c) => (
               <div
                 key={c.id}
                 className="bg-white rounded-xl border border-slate-200 shadow-sm p-5"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      className="mt-2 rounded border-slate-300"
-                      defaultChecked={index === 0}
-                    />
+                    <input type="checkbox" className="mt-2 rounded border-slate-300" />
                     <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
                       {c.name
                         .split(" ")
@@ -223,13 +209,14 @@ const CandidatesSaved = () => {
                   </div>
                   <button
                     type="button"
-                    className="px-5 py-2 rounded-full text-xs md:text-sm font-semibold text-white bg-[#1447E6] hover:bg-[#1237b5]"
+                    className="px-5 py-2 rounded-full text-xs md:text-sm font-semibold text-white bg-[#2563EB] hover:bg-[#1248C1]"
                   >
                     Unlock Contact (1 Credit)
                   </button>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -239,10 +226,10 @@ const CandidatesSaved = () => {
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
               Credits Remaining
             </p>
-            <p className="text-3xl font-bold text-[#F97316]">8</p>
+            <p className="text-3xl font-bold text-[#F97316]">{creditsRemaining}</p>
             <button
               type="button"
-              className="w-full mt-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea580c]"
+              className="w-full mt-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#F97316] hover:bg-[#CC5705]"
             >
               Buy Credits
             </button>

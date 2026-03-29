@@ -1,35 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
-const creditPacks = [
-  {
-    name: "Starter Pack",
-    credits: 10,
-    price: "₹999",
-    posts: "Post 10 Jobs",
-    unlock: "Unlock 10 Candidate Contacts",
-    support: "Standard Support",
-    highlight: false,
-  },
-  {
-    name: "Growth Pack",
-    credits: 50,
-    price: "₹4499",
-    posts: "Post 50 Jobs",
-    unlock: "Unlock 50 Candidate Contacts",
-    support: "Priority Support",
-    highlight: true,
-    badge: "Most Popular",
-  },
-  {
-    name: "Business Pack",
-    credits: 200,
-    price: "₹14999",
-    posts: "Post 200 Jobs",
-    unlock: "Unlock 200 Candidate Contacts",
-    support: "Dedicated Support",
-    highlight: false,
-  },
-];
+import { EMPLOYER_CREDIT_PACKS } from "../../constants/employerCommerce";
 
 const BuyCredits = () => {
   const navigate = useNavigate();
@@ -40,7 +10,7 @@ const BuyCredits = () => {
         <div className="max-w-6xl mx-auto px-8 pt-8 pb-10">
           <div className="flex items-center justify-center mb-8 text-sm font-medium text-slate-600 gap-8">
             <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[#1447E6] text-white flex items-center justify-center text-xs">
+              <span className="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-xs">
                 1
               </span>
               <span className="text-slate-900">Select Credits</span>
@@ -63,14 +33,14 @@ const BuyCredits = () => {
             </p>
             <button
               type="button"
-              className="mt-2 text-sm font-semibold text-[#1447E6]"
+              className="mt-2 text-sm font-semibold text-[#2563EB]"
             >
               View how credits work
             </button>
           </section>
 
           <section className="mb-8">
-            <div className="rounded-2xl bg-gradient-to-r from-[#3B82F6] via-[#6366F1] to-[#F97316] text-white px-8 py-5 flex flex-col md:flex-row md:items-center md:justify-between shadow-lg">
+            <div className="rounded-2xl bg-gradient-to-r from-[#2563EB] via-[#6E97F2] to-[#F97316] text-white px-8 py-5 flex flex-col md:flex-row md:items-center md:justify-between shadow-lg">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-wide">
                   Up to 50% OFF on Credit Packs
@@ -101,17 +71,17 @@ const BuyCredits = () => {
           </div>
 
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {creditPacks.map((pack) => (
+            {EMPLOYER_CREDIT_PACKS.map((pack) => (
               <div
-                key={pack.name}
+                key={pack.id}
                 className={`relative bg-white rounded-2xl border p-6 shadow-sm flex flex-col ${
                   pack.highlight
-                    ? "border-[#1447E6] ring-1 ring-[#1447E6]/20"
+                    ? "border-[#2563EB] ring-1 ring-[#2563EB1A]"
                     : "border-slate-200"
                 }`}
               >
                 {pack.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-semibold px-3 py-1 rounded-full bg-[#1447E6] text-white shadow">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-semibold px-3 py-1 rounded-full bg-[#2563EB] text-white shadow">
                     {pack.badge}
                   </span>
                 )}
@@ -132,7 +102,7 @@ const BuyCredits = () => {
                   onClick={() => navigate("/dashboard/credits/checkout")}
                   className={`mt-6 px-4 py-2.5 rounded-full text-sm font-semibold ${
                     pack.highlight
-                      ? "bg-[#F97316] text-white hover:bg-[#ea580c]"
+                      ? "bg-[#F97316] text-white hover:bg-[#CC5705]"
                       : "border border-slate-300 text-slate-800 hover:bg-slate-50"
                   }`}
                 >
@@ -158,7 +128,7 @@ const BuyCredits = () => {
               </div>
               <button
                 type="button"
-                className="mt-5 px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#1447E6] hover:bg-[#1237b5]"
+                className="mt-5 px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#2563EB] hover:bg-[#1248C1]"
               >
                 Contact Sales
               </button>

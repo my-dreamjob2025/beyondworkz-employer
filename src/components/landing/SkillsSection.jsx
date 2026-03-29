@@ -5,15 +5,15 @@ const SkillsSection = () => {
   const [selectedSkill, setSelectedSkill] = useState("React");
 
   return (
-    <section className="py-20 bg-[#FFF7ED]">
+    <section className="py-20 bg-[#F973161A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
             Access talent across in-demand skills
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
-            Our specialized platform connects you with the most critical technical and
-            professional talent in the industry.
+          <p className="mt-4 text-lg text-slate-500">
+            Our specialized talent pools cover the most critical technical and
+            business roles in the industry.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-3">
@@ -22,10 +22,11 @@ const SkillsSection = () => {
               key={skill}
               type="button"
               onClick={() => setSelectedSkill(skill)}
-              className={`px-5 py-2.5 rounded-full font-medium transition-colors ${
+              style={selectedSkill === skill ? {} : undefined}
+              className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-200 skill-btn ${
                 selectedSkill === skill
-                  ? "bg-[#F97316] text-white"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-[#1447E6] hover:text-[#1447E6]"
+                  ? "border border-[#F97316] text-[#F97316] bg-white"
+                  : "bg-white border border-slate-200 text-slate-700"
               }`}
             >
               {skill}
@@ -33,6 +34,15 @@ const SkillsSection = () => {
           ))}
         </div>
       </div>
+
+      <style>{`
+        .skill-btn:hover {
+          background: #FFFFFF;
+          border: 1px solid #F97316;
+          color: #F97316;
+          box-shadow: 0px 4px 7.8px 0px #F9731699;
+        }
+      `}</style>
     </section>
   );
 };

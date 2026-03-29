@@ -55,7 +55,7 @@ const HelpSupport = () => {
               </button>
               <button
                 type="button"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-amber-300 bg-[#FFFBEB] hover:bg-[#FEF3C7] text-slate-800"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-amber-300 bg-[#FFDB431A] hover:bg-[#FFDB431A] text-slate-800"
               >
                 <span>Chat on WhatsApp</span>
                 <span className="text-[11px] text-amber-600 font-semibold">

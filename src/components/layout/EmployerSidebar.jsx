@@ -5,7 +5,8 @@ import useAuth from "../../hooks/useAuth";
 const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const creditBalance = user?.companyProfile?.creditBalance ?? user?.creditBalance ?? 0;
   const [openGroups, setOpenGroups] = useState({
     Jobs: false,
     "Candidate Database": false,
@@ -242,7 +243,8 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
   };
 
   const sidebarNav = (
-    <nav className="flex-1 overflow-y-auto p-4 space-y-1 pt-6">
+    <>
+      <nav className="flex-1 space-y-1 overflow-y-auto p-4 pt-5">
       {navItems.map((item) => {
         if (item.children) {
           const isGroupActive = item.children.some((c) => isActive(c.path));
@@ -258,7 +260,7 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
                 }
                 className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
                   isGroupActive
-                    ? "bg-[#EEF2FF] text-[#2563EB]"
+                    ? "bg-[#2563EB1A] text-[#2563EB]"
                     : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
@@ -305,7 +307,7 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
             onClick={() => handleNavigate(item.path)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
               active
-                ? "bg-[#EEF2FF] text-[#2563EB]"
+                ? "bg-[#2563EB1A] text-[#2563EB]"
                 : "text-slate-700 hover:bg-slate-50"
             }`}
           >
@@ -334,7 +336,7 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
             onClick={() => handleNavigate(item.path)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
               active
-                ? "bg-[#EEF2FF] text-[#2563EB]"
+                ? "bg-[#2563EB1A] text-[#2563EB]"
                 : "text-slate-700 hover:bg-slate-50"
             }`}
           >
@@ -351,11 +353,11 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
         <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
           Credits Remaining
         </p>
-        <p className="text-3xl font-bold text-[#F97316]">8</p>
+        <p className="text-3xl font-bold text-[#F97316]">{Number(creditBalance).toLocaleString()}</p>
         <button
           type="button"
           onClick={() => handleNavigate("/dashboard/credits/buy")}
-          className="w-full mt-3 py-2 rounded-lg text-sm font-semibold text-white bg-[#F97316] hover:bg-[#ea580c] transition-colors"
+          className="w-full mt-3 py-2 rounded-lg text-sm font-semibold text-white bg-[#F97316] hover:bg-[#CC5705] transition-colors"
         >
           Buy Credits
         </button>
@@ -376,21 +378,23 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
         </button>
       </div>
     </nav>
+    </>
   );
 
   return (
     <>
-      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+      <aside className="hidden h-full min-h-0 w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
         {sidebarNav}
       </aside>
 
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-40">
+        <div className="fixed inset-0 z-40 lg:hidden">
           <div
             className="absolute inset-0 bg-slate-900/40"
             onClick={closeMobile}
+            aria-hidden
           />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+          <aside className="absolute bottom-0 left-0 top-0 flex h-full w-[min(288px,88vw)] flex-col border-r border-slate-200 bg-white shadow-xl">
             {sidebarNav}
           </aside>
         </div>

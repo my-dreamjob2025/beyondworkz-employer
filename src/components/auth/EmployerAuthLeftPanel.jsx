@@ -1,67 +1,47 @@
-import logo from "../../assets/logos/beyondworkzlogo.png";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
+import { BrandWordmark } from "../brand/BrandMark";
 import userIllustration from "../../assets/user-illustration.png";
 
 const EmployerAuthLeftPanel = () => {
   return (
     <div
       className="hidden lg:flex lg:w-1/2 flex-shrink-0 relative min-h-screen overflow-hidden isolate"
-      style={{ backgroundColor: "#1447E6" }}
+      style={{ backgroundColor: "#2563EB" }}
     >
       {/* Concentric glow rings */}
       <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{ top: "-6%", paddingBottom: "18%" }}
       >
-        <div
-          className="w-[420px] h-[420px] rounded-full"
-          style={{ background: "rgba(255,255,255,0.07)" }}
-        />
+        <div className="w-[420px] h-[420px] rounded-full border border-[#6E97F2]" />
       </div>
       <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{ top: "-6%", paddingBottom: "18%" }}
       >
-        <div
-          className="w-[310px] h-[310px] rounded-full"
-          style={{ background: "rgba(255,255,255,0.07)" }}
-        />
+        <div className="w-[310px] h-[310px] rounded-full border border-[#B6CBF8]" />
       </div>
       <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{ top: "-6%", paddingBottom: "18%" }}
       >
-        <div
-          className="w-[210px] h-[210px] rounded-full"
-          style={{ background: "rgba(255,255,255,0.07)" }}
-        />
+        <div className="w-[210px] h-[210px] rounded-full border border-[#6E97F2]" />
       </div>
 
       <div
         className="absolute -bottom-20 -right-20 w-[280px] h-[280px] rounded-full pointer-events-none"
-        style={{ background: "rgba(255,255,255,0.10)" }}
+        style={{ backgroundColor: "#6E97F2" }}
       />
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col min-h-screen w-full px-10 py-8">
-        <header className="flex items-center gap-3 flex-shrink-0">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md"
-            style={{ backgroundColor: "#ffffff" }}
-          >
-            <img
-              src={logo}
-              alt="BW"
-              className="w-8 h-8 object-contain"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.parentElement.innerHTML =
-                  '<span style="color:#1447E6;font-weight:700;font-size:14px;">BW</span>';
-              }}
-            />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">
-            Beyond Workz
-          </span>
+        <header className="flex flex-shrink-0 flex-wrap items-center gap-3">
+          <img
+            src={brandLogo}
+            alt=""
+            className="h-11 w-auto max-w-[100px] shrink-0 object-contain object-left brightness-0 invert sm:h-12 sm:max-w-[120px]"
+          />
+          <BrandWordmark variant="onBlue" />
         </header>
 
         <div className="flex-1 flex items-center justify-center py-6">
@@ -79,7 +59,7 @@ const EmployerAuthLeftPanel = () => {
           </h2>
           <p
             className="text-base xl:text-lg max-w-xs leading-relaxed mb-6"
-            style={{ color: "rgba(255,255,255,0.85)" }}
+            style={{ color: "#E8E8E8" }}
           >
             Post jobs and connect with skilled candidates for blue-collar and
             white-collar roles.

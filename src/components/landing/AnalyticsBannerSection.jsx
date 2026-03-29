@@ -1,47 +1,68 @@
+import { useNavigate } from "react-router-dom";
+
 const AnalyticsBannerSection = () => {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-20 relative overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)",
-        }}
-      />
-      <div className="absolute inset-0 opacity-20">
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <pattern id="waves" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+    <section className="bg-white pb-20 pt-2 sm:pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-2xl bg-[#2563EB] px-6 py-14 text-center shadow-lg sm:px-10 sm:py-16 lg:rounded-3xl lg:py-20">
+          {/* Bottom-half wave decoration — lighter blue / white overlays */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 top-[42%] overflow-hidden"
+            aria-hidden
+          >
+            <svg
+              className="absolute -bottom-px left-1/2 min-h-[85%] w-[140%] -translate-x-1/2 text-white"
+              viewBox="0 0 1440 280"
+              preserveAspectRatio="none"
+            >
               <path
-                d="M0 10 Q5 5 10 10 T20 10"
-                stroke="white"
-                fill="none"
-                strokeWidth="0.5"
-                opacity="0.5"
+                fill="currentColor"
+                fillOpacity="0.12"
+                d="M0,120 C320,200 640,40 960,100 C1200,150 1320,80 1440,110 L1440,280 L0,280 Z"
               />
               <path
-                d="M0 15 Q5 10 10 15 T20 15"
-                stroke="white"
-                fill="none"
-                strokeWidth="0.5"
-                opacity="0.3"
+                fill="currentColor"
+                fillOpacity="0.08"
+                d="M0,180 C280,140 560,220 880,160 C1100,120 1280,200 1440,170 L1440,280 L0,280 Z"
               />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#waves)" />
-        </svg>
+              <path
+                fill="currentColor"
+                fillOpacity="0.06"
+                d="M0,210 C400,250 800,170 1440,220 L1440,280 L0,280 Z"
+              />
+            </svg>
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-2xl">
+            <h2 className="text-3xl font-bold tracking-tight text-white lg:text-4xl">
+              Hiring Insights &amp; Analytics
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-[#E8E8E8] sm:text-lg">
+              Make data-driven hiring decisions with real-time talent pool analytics, salary
+              benchmarks, and competitor analysis.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/register")}
+              className="analytics-cta mt-8 inline-flex items-center justify-center rounded-full bg-[#F97316] px-8 py-3.5 text-sm font-semibold text-white transition-colors duration-200 sm:text-base"
+            >
+              Explore Analytics
+            </button>
+          </div>
+        </div>
       </div>
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white">
-          Hiring Insights & Analytics
-        </h2>
-        <p className="mt-4 text-lg text-white/90 max-w-2xl mx-auto">
-          Make data-driven hiring decisions with real-time talent pool analytics, salary
-          benchmarks, and competitor analysis.
-        </p>
-        <button className="mt-8 px-8 py-4 rounded-lg font-semibold text-white bg-[#F97316] hover:bg-[#ea580c] transition-colors">
-          Explore Analytics
-        </button>
-      </div>
+
+      <style>{`
+        .analytics-cta {
+          box-shadow: 0px 4px 12px 0px #0000001a;
+        }
+        .analytics-cta:hover {
+          background-color: #CC5705;
+          box-shadow: 0px 6px 16px 0px #0000001a;
+        }
+      `}</style>
     </section>
   );
 };

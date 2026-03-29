@@ -173,7 +173,7 @@ const Register = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="company@example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                   required
                 />
               </div>
@@ -184,15 +184,15 @@ const Register = () => {
                     type="checkbox"
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="mt-1 accent-[#1447E6]"
+                    className="mt-1 accent-[#2563EB]"
                   />
                   <span className="text-sm text-slate-600">
                     I agree to the{" "}
-                    <a href="#" className="text-[#1447E6] hover:underline">
+                    <a href="#" className="text-[#2563EB] hover:underline">
                       Terms of Service
                     </a>{" "}
                     and{" "}
-                    <a href="#" className="text-[#1447E6] hover:underline">
+                    <a href="#" className="text-[#2563EB] hover:underline">
                       Privacy Policy
                     </a>
                   </span>
@@ -202,7 +202,7 @@ const Register = () => {
                     type="checkbox"
                     checked={agreeWhatsapp}
                     onChange={(e) => setAgreeWhatsapp(e.target.checked)}
-                    className="mt-1 accent-[#1447E6]"
+                    className="mt-1 accent-[#2563EB]"
                   />
                   <span className="text-sm text-slate-600">
                     I agree to receive job-related updates via WhatsApp
@@ -222,7 +222,7 @@ const Register = () => {
                 type="submit"
                 disabled={loading || !email || !agreeTerms}
                 className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
-                style={{ backgroundColor: "#1447E6" }}
+                style={{ backgroundColor: "#2563EB" }}
               >
                 {loading ? (
                   <>
@@ -273,7 +273,7 @@ const Register = () => {
                   type="button"
                   onClick={() => navigate("/login")}
                   className="font-semibold hover:underline"
-                  style={{ color: "#1447E6" }}
+                  style={{ color: "#2563EB" }}
                 >
                   Login
                 </button>
@@ -303,7 +303,7 @@ const Register = () => {
                       onChange={(e) => handleOTPChange(index, e.target.value)}
                       onKeyDown={(e) => handleOTPKeyDown(index, e)}
                       onPaste={handleOTPPaste}
-                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#1447E6] focus:ring-2 focus:ring-[#1447E6]"
+                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]"
                       placeholder="0"
                     />
                   ))}
@@ -315,7 +315,7 @@ const Register = () => {
                     onClick={handleResendOTP}
                     disabled={resendCooldown > 0}
                     className="text-sm hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
-                    style={{ color: "#1447E6" }}
+                    style={{ color: "#2563EB" }}
                   >
                     {resendCooldown > 0
                       ? `Resend OTP in ${resendCooldown}s`
@@ -335,7 +335,7 @@ const Register = () => {
                   type="submit"
                   disabled={loading || otp.join("").length !== 6}
                   className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
-                  style={{ backgroundColor: "#1447E6" }}
+                  style={{ backgroundColor: "#2563EB" }}
                 >
                   {loading ? (
                     <>

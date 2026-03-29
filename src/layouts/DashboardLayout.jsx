@@ -9,7 +9,7 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <EmployerHeader onMenuClick={() => setMobileSidebarOpen(true)} />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         <EmployerSidebar
           mobileOpen={mobileSidebarOpen}
           onMobileOpenChange={setMobileSidebarOpen}

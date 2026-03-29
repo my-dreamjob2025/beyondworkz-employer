@@ -2,55 +2,60 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
 
+/**
+ * Design system — use only these colors in UI (see index.css @theme for Tailwind).
+ */
 :root {
-  --color-primary-100: #eff6ff;
-  --color-primary-200: #dbeafe;
-  --color-primary-300: #bfdbfe;
-  --color-primary-400: #93c5fd;
-  --color-primary-500: #60a5fa;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-secondary-600: #1248c1;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-neutral-50: #f8fafc;
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #1e293b;
-  --color-neutral-900: #0f172a;
-  --font-family-inter: "Inter", sans-serif;
-}
+  --bw-white: #ffffff;
+  --bw-black: #000000;
+  --bw-overlay-10: #0000001a;
+  --bw-gray-mid: #7f7f7f;
+  --bw-charcoal: #2d3339;
 
-:root {
-  --color-primary-100: #eff6ff;
-  --color-primary-200: #dbeafe;
-  --color-primary-300: #bfdbfe;
-  --color-primary-400: #93c5fd;
-  --color-primary-500: #60a5fa;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-secondary-600: #1248c1;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-neutral-50: #f8fafc;
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #1e293b;
-  --color-neutral-900: #0f172a;
+  --bw-primary-100: #b6cbf8;
+  --bw-primary-200: #6e97f2;
+  --bw-primary-300: #2563eb;
+  --bw-primary-400: #1248c1;
+  --bw-primary-500: #0d3388;
+  --bw-primary-10: #2563eb1a;
+
+  --bw-secondary-100: #fdd0b1;
+  --bw-secondary-200: #fba264;
+  --bw-secondary-300: #f97316;
+  --bw-secondary-400: #cc5705;
+  --bw-secondary-500: #913d04;
+  --bw-secondary-10: #f973161a;
+
+  --bw-neutral-100: #ffffff;
+  --bw-neutral-200: #e8e8e8;
+  --bw-neutral-300: #d2d2d2;
+  --bw-neutral-400: #bbbbbb;
+  --bw-neutral-500: #a4a4a4;
+  --bw-neutral-600: #8e8e8e;
+  --bw-neutral-700: #777777;
+  --bw-neutral-800: #606060;
+  --bw-neutral-900: #4a4a4a;
+  --bw-neutral-1000: #333333;
+  --bw-neutral-10: #3333331a;
+
+  --bw-navy-100: #375499;
+  --bw-navy-200: #0f172a;
+  --bw-navy-10: #0f172a1a;
+
+  --bw-red-100: #fb3748;
+  --bw-red-200: #d00416;
+  --bw-red-10: #fb37481a;
+
+  --bw-yellow-100: #ffdb43;
+  --bw-yellow-200: #dfb400;
+  --bw-yellow-10: #ffdb431a;
+
+  --bw-green-100: #84ebb4;
+  --bw-green-200: #1fc16b;
+  --bw-green-10: #1fc16b1a;
+
+  --bw-lilac: #f3e7ff;
+
   --font-family-inter: "Inter", sans-serif;
 }
 
@@ -62,8 +67,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-neutral-50);
-  color: var(--color-neutral-900);
+  background-color: var(--bw-white);
+  color: var(--bw-neutral-1000);
 }
 
 button {

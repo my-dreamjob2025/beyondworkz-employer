@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { fetchEmployerApplications } from "../../services/applicationService";
 
 const INTERVIEW_STATUSES = [
   { key: "scheduled", label: "Scheduled", color: "text-blue-600", dot: "bg-blue-500" },
@@ -7,31 +8,8 @@ const INTERVIEW_STATUSES = [
 ];
 
 const INTERVIEW_TYPES = ["All types", "Online", "In‑person", "Phone"];
-const JOB_ROLES = ["All roles", "React Developer", "Senior Product Designer", "Product Manager"];
+const JOB_ROLES_BASE = ["All roles"];
 const STATUSES = ["All status", "Scheduled", "Completed", "Cancelled"];
-
-const MOCK_INTERVIEWS = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    role: "React Developer",
-    type: "Online",
-    date: "22 March",
-    time: "11:30 AM",
-    interviewer: "HR Team",
-    status: "Scheduled",
-  },
-  {
-    id: 2,
-    name: "Priya Patel",
-    role: "Senior Product Designer",
-    type: "In‑person",
-    date: "22 March",
-    time: "09:00 AM",
-    interviewer: "Design Lead",
-    status: "Completed",
-  },
-];
 
 const getMonthDaysMatrix = (year, monthIndex) => {
   const firstDay = new Date(year, monthIndex, 1);
@@ -59,21 +37,62 @@ const getMonthDaysMatrix = (year, monthIndex) => {
 };
 
 const InterviewManagement = () => {
-  const [selectedDate, setSelectedDate] = useState(22);
+  const today = useMemo(() => new Date(), []);
+  const year = today.getFullYear();
+  const monthIndex = today.getMonth();
+  const monthLabel = today.toLocaleString("en-IN", { month: "long", year: "numeric" });
+
+  const [selectedDate, setSelectedDate] = useState(() => today.getDate());
   const [selectedType, setSelectedType] = useState("All types");
   const [selectedRole, setSelectedRole] = useState("All roles");
   const [selectedStatus, setSelectedStatus] = useState("All status");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [interviews, setInterviews] = useState([]);
 
-  const today = useMemo(() => new Date(), []);
-  const year = today.getFullYear();
-  const monthIndex = 2;
-  const monthLabel = "March 2025";
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetchEmployerApplications();
+        if (cancelled || !res.success || !Array.isArray(res.items)) return;
+        const pipeline = res.items.filter((a) => a.status === "interview_scheduled");
+        setInterviews(
+          pipeline.map((a) => ({
+            id: a.id,
+            name: a.candidate?.name || "Candidate",
+            role: a.job?.title || "Role",
+            type: "—",
+            date: a.appliedAt
+              ? new Date(a.appliedAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "—",
+            time: "—",
+            interviewer: "—",
+            status: "Scheduled",
+          }))
+        );
+      } catch {
+        if (!cancelled) setInterviews([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const weeks = useMemo(() => getMonthDaysMatrix(year, monthIndex), [year, monthIndex]);
 
-  const filteredInterviews = MOCK_INTERVIEWS.filter((item) => {
-    if (selectedType !== "All types" && item.type !== selectedType.replace("‑", "-")) return false;
+  const jobRoles = useMemo(() => {
+    const titles = [...new Set(interviews.map((i) => i.role).filter(Boolean))];
+    return [...JOB_ROLES_BASE, ...titles.filter((t) => t !== "Role")];
+  }, [interviews]);
+
+  const filteredInterviews = interviews.filter((item) => {
+    if (selectedType !== "All types" && item.type !== "—" && item.type !== selectedType.replace("‑", "-"))
+      return false;
     if (selectedRole !== "All roles" && item.role !== selectedRole) return false;
     if (selectedStatus !== "All status" && item.status !== selectedStatus) return false;
     return true;
@@ -91,9 +110,9 @@ const InterviewManagement = () => {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-sm font-semibold text-white shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2563EB] hover:bg-[#1248C1] text-sm font-semibold text-white shadow-sm"
         >
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/10 border border-white/20">
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#6E97F2] border border-[#B6CBF8]">
             +
           </span>
           Schedule Interview
@@ -166,13 +185,6 @@ const InterviewManagement = () => {
                       {isToday && !isSelected && (
                         <span className="absolute inset-x-2 bottom-1 h-1 rounded-full bg-[#2563EB]" />
                       )}
-                      {day === 22 && (
-                        <span
-                          className={`absolute inset-x-2 top-1 h-1 rounded-full ${
-                            isSelected ? "bg-white/70" : "bg-emerald-400"
-                          }`}
-                        />
-                      )}
                     </button>
                   );
                 })}
@@ -202,9 +214,11 @@ const InterviewManagement = () => {
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col">
           <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
             <div>
-              <p className="text-sm font-semibold text-slate-900">Interviews on 22 March</p>
+              <p className="text-sm font-semibold text-slate-900">Interview pipeline</p>
               <p className="text-xs text-slate-500">
-                {filteredInterviews.length} scheduled for this date
+                {filteredInterviews.length} candidate
+                {filteredInterviews.length === 1 ? "" : "s"} in interview stage (update status in
+                Applications).
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -233,7 +247,7 @@ const InterviewManagement = () => {
               onChange={(e) => setSelectedRole(e.target.value)}
               className="px-3 py-2 rounded-full border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
             >
-              {JOB_ROLES.map((item) => (
+              {jobRoles.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
@@ -376,7 +390,7 @@ const InterviewManagement = () => {
                         </button>
                         <button
                           type="button"
-                          className="px-3 py-1.5 rounded-full bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#1D4ED8]"
+                          className="px-3 py-1.5 rounded-full bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#1248C1]"
                         >
                           Join Meeting
                         </button>
@@ -432,11 +446,11 @@ const InterviewManagement = () => {
             <form className="px-6 py-5 space-y-4">
               <div className="flex items-center gap-3 pb-2 border-b border-slate-100 mb-2">
                 <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold text-sm">
-                  RS
+                  ?
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Rahul Sharma</p>
-                  <p className="text-xs text-slate-500">React Developer • Pune</p>
+                  <p className="text-sm font-semibold text-slate-900">Candidate</p>
+                  <p className="text-xs text-slate-500">Select a candidate when scheduling from a profile</p>
                 </div>
               </div>
 
@@ -444,10 +458,7 @@ const InterviewManagement = () => {
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-slate-600">Job Role</label>
                   <select className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#2563EB]">
-                    <option>Select Job Role</option>
-                    <option>React Developer</option>
-                    <option>Senior Product Designer</option>
-                    <option>Product Manager</option>
+                    <option value="">Select job role</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
@@ -537,7 +548,7 @@ const InterviewManagement = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-full bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#1D4ED8]"
+                    className="px-4 py-2 rounded-full bg-[#2563EB] text-xs font-semibold text-white hover:bg-[#1248C1]"
                   >
                     Schedule Interview
                   </button>

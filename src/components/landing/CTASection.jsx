@@ -4,26 +4,42 @@ const CTASection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 bg-[#FFF7ED]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
-          Start Hiring Top Talent Today
-        </h2>
-        <p className="mt-4 text-lg text-slate-600">
-          Join thousands of companies scaling their teams with Beyond Workz.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <button
-            onClick={() => navigate("/register")}
-            className="px-8 py-4 rounded-lg font-semibold text-white bg-[#F97316] hover:bg-[#ea580c] transition-colors"
-          >
-            Create Employer Account
-          </button>
-          <button className="px-8 py-4 rounded-lg font-semibold text-slate-900 border border-slate-300 bg-white hover:bg-slate-50 transition-colors">
-            Talk to Sales
-          </button>
+    <section className="py-16 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-[#FDD0B1] rounded-2xl py-16 px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
+            Start Hiring Top Talent Today
+          </h2>
+          <p className="mt-4 text-lg text-slate-500">
+            Join thousands of companies scaling their teams with Beyond Workz.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <button
+              onClick={() => navigate("/register")}
+              className="cta-primary px-8 py-3.5 rounded-full font-semibold text-white bg-[#F97316] transition-all duration-200"
+            >
+              Create Employer Account
+            </button>
+            <button className="cta-secondary px-8 py-3.5 rounded-full font-semibold text-slate-900 border border-slate-300 bg-white transition-all duration-200">
+              Talk to Sales
+            </button>
+          </div>
         </div>
       </div>
+
+      <style>{`
+        .cta-primary {
+          box-shadow: 0px 4px 12px 0px #0000001a;
+        }
+        .cta-primary:hover {
+          background-color: #CC5705;
+          box-shadow: 0px 6px 16px 0px #0000001a;
+        }
+        .cta-secondary:hover {
+          background-color: #E8E8E8;
+          border-color: #8E8E8E;
+        }
+      `}</style>
     </section>
   );
 };
