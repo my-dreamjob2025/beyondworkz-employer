@@ -5,6 +5,7 @@ import {
   fetchEmployerApplications,
   updateApplicationStatus,
 } from "../../services/applicationService";
+import EmployerApplicationDetailModal from "../../components/applications/EmployerApplicationDetailModal";
 
 const STATUS_OPTIONS = [
   { value: "submitted", label: "Submitted" },
@@ -37,6 +38,7 @@ const Applicants = () => {
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
+  const [detailApplicationId, setDetailApplicationId] = useState(null);
 
   const loadJobs = useCallback(async () => {
     const res = await fetchEmployerJobs();
@@ -295,18 +297,19 @@ const Applicants = () => {
                 <th className="px-4 py-3 text-left">Job</th>
                 <th className="px-4 py-3 text-left">Applied</th>
                 <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-12 text-center text-slate-500">
                     Loading applications…
                   </td>
                 </tr>
               ) : tableRows.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-12 text-center text-slate-500">
                     No applications in this view. Publish jobs and have candidates apply from the job
                     board.
                   </td>
@@ -349,6 +352,15 @@ const Applicants = () => {
                         ))}
                       </select>
                     </td>
+                    <td className="px-4 py-3 align-middle">
+                      <button
+                        type="button"
+                        onClick={() => setDetailApplicationId(row.id)}
+                        className="text-sm font-semibold text-[#2563EB] hover:underline"
+                      >
+                        View
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -356,6 +368,12 @@ const Applicants = () => {
           </table>
         </div>
       </div>
+
+      <EmployerApplicationDetailModal
+        applicationId={detailApplicationId}
+        open={detailApplicationId != null}
+        onClose={() => setDetailApplicationId(null)}
+      />
     </div>
   );
 };

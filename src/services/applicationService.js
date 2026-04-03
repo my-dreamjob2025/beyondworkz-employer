@@ -19,6 +19,11 @@ export async function fetchEmployerApplications(jobId) {
   return data;
 }
 
+export async function fetchEmployerApplicationById(applicationId) {
+  const { data } = await api.get(`/employer/applications/${encodeURIComponent(applicationId)}`);
+  return data;
+}
+
 export async function updateApplicationStatus(applicationId, status) {
   const { data } = await api.patch(`/employer/applications/${applicationId}/status`, {
     status,

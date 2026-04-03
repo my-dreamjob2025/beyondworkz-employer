@@ -9,7 +9,6 @@ import Register from "../pages/auth/Register";
 
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import PageNotFound from "../pages/common/PageNotFound";
 
 const DashboardLayout = lazy(() => import("../layouts/DashboardLayout"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
@@ -170,10 +169,10 @@ const AppRoutes = () => {
               }
             />
             <Route path="settings" element={<Settings />} />
-            <Route path="*" element={<PageNotFound />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
 
-          <Route path="*" element={<PageNotFound />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthInitializer>
     </Router>

@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useNotifications, notificationIconType } from "../../hooks/useNotifications";
 import { BrandLogoWithWordmark } from "../brand/BrandMark";
 
 const EmployerHeader = ({ onMenuClick = () => {} }) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
+  const notificationsEnabled = Boolean(user) && !authLoading;
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications(notificationsEnabled);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -27,11 +30,9 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
     return () => document.removeEventListener("mousedown", handleDocClick);
   }, []);
 
-  const notifications = [];
   const creditBalance =
     user?.companyProfile?.creditBalance ?? user?.creditBalance ?? 0;
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
   const allCount = notifications.length;
 
   const companyLabel =
@@ -96,6 +97,8 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                   <button
                     type="button"
                     className="text-xs font-medium text-[#2563EB] hover:underline"
+                    disabled={unreadCount === 0}
+                    onClick={() => markAllRead()}
                   >
                     Mark all as read
                   </button>
@@ -161,10 +164,17 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                     .filter((n) => (activeTab === "unread" ? n.unread : true))
                     .map((notification, index) => {
                       const isPrimary = index === 0;
+                      const iconType = notificationIconType(notification.type);
 
                       return (
                         <div
                           key={notification.id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => markRead(notification.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") markRead(notification.id);
+                          }}
                           className={`px-4 py-3 flex gap-3 text-sm ${
                             isPrimary
                               ? "bg-[#2563EB1A]"
@@ -172,7 +182,7 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                           } border-b border-slate-100 last:border-b-0`}
                         >
                           <div className="mt-1">
-                            {notification.iconType === "document" && (
+                            {iconType === "document" && (
                               <div className="w-8 h-8 rounded-lg bg-[#2563EB1A] flex items-center justify-center text-[#2563EB]">
                                 <svg
                                   className="w-4 h-4"
@@ -189,7 +199,7 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                                 </svg>
                               </div>
                             )}
-                            {notification.iconType === "calendar" && (
+                            {iconType === "calendar" && (
                               <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
                                 <svg
                                   className="w-4 h-4"
@@ -206,7 +216,7 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                                 </svg>
                               </div>
                             )}
-                            {notification.iconType === "alert" && (
+                            {iconType === "alert" && (
                               <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
                                 <svg
                                   className="w-4 h-4"
@@ -225,20 +235,20 @@ const EmployerHeader = ({ onMenuClick = () => {} }) => {
                             )}
                           </div>
 
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-900">
                               {notification.title}
                             </p>
+                            {notification.message ? (
+                              <p className="text-xs text-slate-600 mt-1 line-clamp-2">{notification.message}</p>
+                            ) : null}
                             <p className="text-xs text-slate-500 mt-1">
-                              {notification.time}
+                              {notification.time || notification.timeLabel}
                             </p>
-                            <button
-                              type="button"
-                              className="mt-2 text-xs font-semibold text-[#2563EB]"
-                            >
-                              {notification.cta}
-                            </button>
                           </div>
+                          {notification.unread ? (
+                            <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 shrink-0" aria-hidden />
+                          ) : null}
                         </div>
                       );
                     })

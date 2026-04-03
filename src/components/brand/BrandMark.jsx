@@ -19,7 +19,7 @@ export function BrandWordmark({ variant = "header", className = "" }) {
     variant === "footerDark" ? (
       <>
         <span className="text-white">Beyond</span>{" "}
-        <span className="text-[#F97316]">Workz</span>
+        <span className="text-amber-400">Workz</span>
       </>
     ) : variant === "onBlue" ? (
       <>
