@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchEmployerJobs } from "../../services/jobPostingService";
 import {
   fetchEmployerApplications,
@@ -30,8 +30,9 @@ function formatAppliedDate(iso) {
 
 const Applicants = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedJobId = searchParams.get("jobId") || "";
   const [jobs, setJobs] = useState([]);
-  const [selectedJobId, setSelectedJobId] = useState("");
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -73,6 +74,15 @@ const Applicants = () => {
   useEffect(() => {
     loadApplications();
   }, [loadApplications]);
+
+  function handleJobFilterChange(e) {
+    const v = e.target.value;
+    if (v) {
+      setSearchParams({ jobId: v }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  }
 
   const selectedJob = useMemo(
     () => (selectedJobId ? jobs.find((j) => String(j.id) === String(selectedJobId)) : null),
@@ -171,13 +181,14 @@ const Applicants = () => {
           <select
             id="job-filter"
             value={selectedJobId}
-            onChange={(e) => setSelectedJobId(e.target.value)}
+            onChange={handleJobFilterChange}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
           >
             <option value="">All jobs</option>
             {jobs.map((j) => (
               <option key={j.id} value={j.id}>
                 {j.title?.trim() || "Untitled"} ({j.status})
+                {typeof j.applicationCount === "number" ? ` · ${j.applicationCount} applied` : ""}
               </option>
             ))}
           </select>
@@ -373,6 +384,7 @@ const Applicants = () => {
         applicationId={detailApplicationId}
         open={detailApplicationId != null}
         onClose={() => setDetailApplicationId(null)}
+        onApplicationUpdated={loadApplications}
       />
     </div>
   );

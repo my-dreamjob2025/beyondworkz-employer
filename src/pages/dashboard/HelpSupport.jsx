@@ -1,121 +1,400 @@
-const HelpSupport = () => {
+import { useCallback, useEffect, useState } from "react";
+import {
+  fetchSupportTickets,
+  fetchSupportTicket,
+  createSupportTicket,
+  replySupportTicket,
+} from "../../services/supportService";
+
+const CATEGORIES = [
+  { value: "account", label: "Account & company profile" },
+  { value: "billing", label: "Credits & billing" },
+  { value: "jobs_applications", label: "Jobs & applicants" },
+  { value: "technical", label: "Technical issue" },
+  { value: "other", label: "Other" },
+];
+
+const STATUS_STYLES = {
+  open: "bg-blue-50 text-blue-800 border-blue-100",
+  in_progress: "bg-amber-50 text-amber-900 border-amber-100",
+  awaiting_user: "bg-violet-50 text-violet-800 border-violet-100",
+  resolved: "bg-emerald-50 text-emerald-800 border-emerald-100",
+  closed: "bg-slate-100 text-slate-600 border-slate-200",
+};
+
+function statusLabel(s) {
+  return String(s || "").replace(/_/g, " ");
+}
+
+function roleLabel(role) {
+  if (role === "admin") return "Support team";
+  if (role === "employer") return "You";
+  return "You";
+}
+
+const FAQS = [
+  {
+    q: "How do credits work when posting jobs?",
+    a: "Credits are consumed when you publish or feature listings, depending on your plan. Check Billing & Credits in the sidebar for balance and packs.",
+  },
+  {
+    q: "How do I manage applicants?",
+    a: "Open Applicants from the dashboard to review applications, update pipeline status, and view candidate details for your roles.",
+  },
+  {
+    q: "Can I edit a job after it’s published?",
+    a: "Yes — open the job from My Jobs, update the details, and save. Status changes (pause / close) are available from the job actions.",
+  },
+];
+
+export default function HelpSupport() {
+  const [tickets, setTickets] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
+  const [listError, setListError] = useState("");
+
+  const [selectedId, setSelectedId] = useState(null);
+  const [detail, setDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const [showForm, setShowForm] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [category, setCategory] = useState("other");
+  const [description, setDescription] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const [replyBody, setReplyBody] = useState("");
+  const [replying, setReplying] = useState(false);
+  const [replyError, setReplyError] = useState("");
+
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const loadList = useCallback(async () => {
+    setListLoading(true);
+    setListError("");
+    try {
+      const data = await fetchSupportTickets();
+      if (data.success) setTickets(data.tickets || []);
+      else setListError(data.message || "Could not load tickets.");
+    } catch (e) {
+      setListError(e.response?.data?.message || e.message || "Could not load tickets.");
+    } finally {
+      setListLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadList();
+  }, [loadList]);
+
+  const loadDetail = useCallback(async (id) => {
+    if (!id) {
+      setDetail(null);
+      return;
+    }
+    setDetailLoading(true);
+    setReplyBody("");
+    setReplyError("");
+    try {
+      const data = await fetchSupportTicket(id);
+      if (data.success && data.ticket) setDetail(data.ticket);
+      else setDetail(null);
+    } catch {
+      setDetail(null);
+    } finally {
+      setDetailLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDetail(selectedId);
+  }, [selectedId, loadDetail]);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setFormError("");
+    if (!subject.trim() || !description.trim()) {
+      setFormError("Please add a subject and description.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const data = await createSupportTicket({
+        subject: subject.trim(),
+        category,
+        description: description.trim(),
+      });
+      if (!data.success) {
+        setFormError(data.message || "Could not create ticket.");
+        return;
+      }
+      setSubject("");
+      setDescription("");
+      setCategory("other");
+      setShowForm(false);
+      await loadList();
+      if (data.ticket?.id) setSelectedId(data.ticket.id);
+    } catch (err) {
+      setFormError(err.response?.data?.message || err.message || "Could not create ticket.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReply = async (e) => {
+    e.preventDefault();
+    if (!detail?.id || !replyBody.trim()) return;
+    setReplying(true);
+    setReplyError("");
+    try {
+      const data = await replySupportTicket(detail.id, replyBody.trim());
+      if (!data.success) {
+        setReplyError(data.message || "Could not send message.");
+        return;
+      }
+      setReplyBody("");
+      if (data.ticket) setDetail(data.ticket);
+      await loadList();
+    } catch (err) {
+      setReplyError(err.response?.data?.message || err.message || "Could not send message.");
+    } finally {
+      setReplying(false);
+    }
+  };
+
+  const canReply = detail && detail.status !== "closed";
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header>
         <h1 className="text-2xl font-semibold text-slate-900">Help &amp; Support</h1>
         <p className="text-sm text-slate-600 mt-1">
-          Get help using BeyondWorkz.
+          Hiring FAQs, billing tips, and a direct line to our team through support tickets.
         </p>
       </header>
 
-      <section className="max-w-xl">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5">
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8c-1.657 0-3 .895-3 2 0 .828.5 1.5 1.5 1.5h1a1.5 1.5 0 011.5 1.5v.5M12 17h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-slate-900">Help Center / FAQs</h2>
-                <p className="text-xs text-slate-600 mt-0.5">
-                  Find answers to common questions about hiring, credits, and billing.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-200 pt-4 space-y-3">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-              Contact Support
-            </p>
-            <p className="text-xs text-slate-500 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Mon – Sun 9:00 AM – 7:00 PM
-            </p>
-
-            <div className="space-y-2 text-sm">
-              <button
-                type="button"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-800"
-              >
-                <span>Chat with Support</span>
-                <span className="text-xs text-slate-400">Open chat</span>
-              </button>
-              <button
-                type="button"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-amber-300 bg-[#FFDB431A] hover:bg-[#FFDB431A] text-slate-800"
-              >
-                <span>Chat on WhatsApp</span>
-                <span className="text-[11px] text-amber-600 font-semibold">
-                  Recommended
-                </span>
-              </button>
-              <div className="flex items-center justify-between px-1">
-                <span className="text-sm text-slate-700">Email Support</span>
-                <a
-                  href="mailto:support@beyondworkz.com"
-                  className="text-xs font-medium text-[#2563EB] hover:underline"
-                >
-                  support@beyondworkz.com
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-200 pt-4 space-y-2 text-sm">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-              Product Guides
-            </p>
-            <ul className="space-y-1 text-sm">
-              <li>
-                <button type="button" className="text-[#2563EB] hover:underline">
-                  How to Post a Job
-                </button>
-              </li>
-              <li>
-                <button type="button" className="text-[#2563EB] hover:underline">
-                  How Credits Work
-                </button>
-              </li>
-              <li>
-                <button type="button" className="text-[#2563EB] hover:underline">
-                  How to Unlock Candidate Contacts
-                </button>
-              </li>
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)] gap-8 items-start">
+        <aside className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-900">Common questions</h2>
+            <ul className="mt-3 divide-y divide-slate-100">
+              {FAQS.map((item, i) => (
+                <li key={item.q} className="py-2">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full text-left text-sm font-medium text-slate-800 flex justify-between gap-2"
+                  >
+                    <span>{item.q}</span>
+                    <span className="text-slate-400 shrink-0">{openFaq === i ? "−" : "+"}</span>
+                  </button>
+                  {openFaq === i ? <p className="text-xs text-slate-600 mt-2 leading-relaxed">{item.a}</p> : null}
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div className="border-t border-slate-200 pt-4 space-y-2">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-              Contact Sales
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 text-sm text-slate-600">
+            <h2 className="text-sm font-semibold text-slate-900">Contact</h2>
+            <p className="mt-2 text-xs leading-relaxed">
+              Email{" "}
+              <a href="mailto:support@beyondworkz.com" className="text-[#2563EB] font-medium hover:underline">
+                support@beyondworkz.com
+              </a>{" "}
+              for enterprise or billing questions. Include your ticket number when following up on a case.
             </p>
-            <p className="text-xs text-slate-600">
-              Need custom hiring plans or bulk credit packages?
-            </p>
+          </div>
+        </aside>
+
+        <section className="space-y-4 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-slate-900">Your tickets</h2>
             <button
               type="button"
-              className="mt-1 w-full px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800"
+              onClick={() => {
+                setShowForm((v) => !v);
+                setFormError("");
+              }}
+              className="px-4 py-2 rounded-lg bg-[#2563EB] text-white text-sm font-semibold hover:bg-blue-700"
             >
-              Talk to Sales
+              {showForm ? "Cancel" : "Raise a ticket"}
             </button>
           </div>
-        </div>
-      </section>
+
+          {showForm ? (
+            <form
+              onSubmit={handleCreate}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4"
+            >
+              <p className="text-sm text-slate-600">
+                Tell us what you need — credits, job posting, applicants, or anything else.
+              </p>
+              {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                  Category
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                  Subject
+                </label>
+                <input
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  placeholder="Short summary"
+                  maxLength={300}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                  Details
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={5}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm resize-y min-h-[120px]"
+                  placeholder="What do you need help with?"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 disabled:opacity-50"
+              >
+                {submitting ? "Submitting…" : "Submit ticket"}
+              </button>
+            </form>
+          ) : null}
+
+          {listError ? <p className="text-sm text-red-600">{listError}</p> : null}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden min-h-[280px]">
+              {listLoading ? (
+                <p className="p-5 text-sm text-slate-500">Loading tickets…</p>
+              ) : tickets.length === 0 ? (
+                <p className="p-5 text-sm text-slate-500">
+                  No tickets yet. Use <strong>Raise a ticket</strong> to reach our team.
+                </p>
+              ) : (
+                <ul className="divide-y divide-slate-100 max-h-[480px] overflow-y-auto">
+                  {tickets.map((t) => (
+                    <li key={t.id}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(t.id)}
+                        className={`w-full text-left px-4 py-3 hover:bg-slate-50 transition ${
+                          selectedId === t.id ? "bg-[#2563EB08]" : ""
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-xs font-mono text-slate-500">{t.ticketNumber}</span>
+                          <span
+                            className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border shrink-0 ${
+                              STATUS_STYLES[t.status] || STATUS_STYLES.open
+                            }`}
+                          >
+                            {statusLabel(t.status)}
+                          </span>
+                        </div>
+                        <p className="text-sm font-medium text-slate-900 mt-1 line-clamp-2">{t.subject}</p>
+                        <p className="text-[11px] text-slate-400 mt-1">
+                          Updated {t.updatedAt ? new Date(t.updatedAt).toLocaleString() : "—"}
+                        </p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm min-h-[280px] flex flex-col">
+              {!selectedId ? (
+                <p className="p-5 text-sm text-slate-500">Select a ticket to view the conversation.</p>
+              ) : detailLoading ? (
+                <p className="p-5 text-sm text-slate-500">Loading…</p>
+              ) : !detail ? (
+                <p className="p-5 text-sm text-red-600">Could not load this ticket.</p>
+              ) : (
+                <>
+                  <div className="border-b border-slate-100 px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className="text-xs font-mono text-slate-500">{detail.ticketNumber}</p>
+                      <h3 className="text-sm font-semibold text-slate-900">{detail.subject}</h3>
+                    </div>
+                    <span
+                      className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border ${
+                        STATUS_STYLES[detail.status] || STATUS_STYLES.open
+                      }`}
+                    >
+                      {statusLabel(detail.status)}
+                    </span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto max-h-[360px] p-4 space-y-4 text-sm">
+                    <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                      <p className="text-[11px] font-semibold text-slate-500 uppercase">Your request</p>
+                      <p className="text-slate-800 whitespace-pre-wrap mt-1">{detail.description}</p>
+                    </div>
+                    {(detail.messages || []).map((m) => (
+                      <div
+                        key={m.id}
+                        className={`rounded-xl p-3 border ${
+                          m.authorRole === "admin"
+                            ? "bg-[#2563EB0D] border-[#2563EB33] ml-0 mr-4"
+                            : "bg-white border-slate-200 ml-4 mr-0"
+                        }`}
+                      >
+                        <p className="text-[11px] font-semibold text-slate-500">{roleLabel(m.authorRole)}</p>
+                        <p className="text-slate-800 whitespace-pre-wrap mt-1">{m.body}</p>
+                        <p className="text-[10px] text-slate-400 mt-2">
+                          {m.createdAt ? new Date(m.createdAt).toLocaleString() : ""}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  {canReply ? (
+                    <form onSubmit={handleReply} className="border-t border-slate-100 p-4 space-y-2">
+                      {replyError ? <p className="text-xs text-red-600">{replyError}</p> : null}
+                      <textarea
+                        value={replyBody}
+                        onChange={(e) => setReplyBody(e.target.value)}
+                        rows={3}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm resize-y"
+                        placeholder="Type a reply…"
+                      />
+                      <button
+                        type="submit"
+                        disabled={replying || !replyBody.trim()}
+                        className="px-4 py-2 rounded-lg bg-[#2563EB] text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {replying ? "Sending…" : "Send reply"}
+                      </button>
+                    </form>
+                  ) : (
+                    <p className="border-t border-slate-100 p-4 text-xs text-slate-500">
+                      This ticket is closed. Open a new ticket if you need more help.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
-};
-
-export default HelpSupport;
-
+}

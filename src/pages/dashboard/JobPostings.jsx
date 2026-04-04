@@ -57,6 +57,19 @@ const JobPostings = () => {
     load();
   }, [load]);
 
+  const goToApplicants = (jobId, e) => {
+    e?.stopPropagation?.();
+    navigate(`/dashboard/applicants?jobId=${encodeURIComponent(jobId)}`);
+  };
+
+  const handleRowOpen = (j) => {
+    if (j.status === "draft") {
+      navigate(`/dashboard/jobs/${j.id}/edit`);
+      return;
+    }
+    navigate(`/dashboard/applicants?jobId=${encodeURIComponent(j.id)}`);
+  };
+
   const handleClose = async (jobId) => {
     if (!window.confirm("Close this job? Candidates will no longer see it as active.")) return;
     setBusyId(jobId);
@@ -78,7 +91,8 @@ const JobPostings = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Job postings</h1>
           <p className="text-slate-600 mt-1 text-sm sm:text-base">
-            Create drafts, publish when ready, and close roles when filled.
+            Create drafts, publish when ready, and close roles when filled. Open a published or closed role
+            to see applicants, profiles, and interviews.
           </p>
         </div>
         <button
@@ -159,59 +173,104 @@ const JobPostings = () => {
                 <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3 hidden md:table-cell">Location</th>
+                  <th className="px-4 py-3 text-center hidden sm:table-cell">Applications</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3 hidden sm:table-cell">Updated</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {jobs.map((j) => (
-                  <tr key={j.id} className="hover:bg-slate-50/80">
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-slate-900">{j.title || "Untitled draft"}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {j.jobType}
-                        {j.openings ? ` · ${j.openings} opening${j.openings > 1 ? "s" : ""}` : ""}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
-                      {[j.city, j.area].filter(Boolean).join(", ") || "—"}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[j.status] || statusStyles.draft}`}
-                      >
-                        {j.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-slate-500 hidden sm:table-cell whitespace-nowrap">
-                      {formatDate(j.updatedAt)}
-                    </td>
-                    <td className="px-4 py-4 text-right whitespace-nowrap">
-                      <div className="inline-flex flex-wrap items-center justify-end gap-2">
-                        {j.status !== "closed" ? (
+                {jobs.map((j) => {
+                  const appCount = typeof j.applicationCount === "number" ? j.applicationCount : 0;
+                  const openRole = j.status === "published" || j.status === "closed";
+                  return (
+                    <tr
+                      key={j.id}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleRowOpen(j);
+                        }
+                      }}
+                      onClick={() => handleRowOpen(j)}
+                      className="hover:bg-slate-50/80 cursor-pointer"
+                    >
+                      <td className="px-4 py-4">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRowOpen(j);
+                          }}
+                          className="text-left w-full"
+                        >
+                          <p
+                            className={`font-semibold ${openRole ? "text-[#2563EB] hover:underline" : "text-slate-900"}`}
+                          >
+                            {j.title || "Untitled draft"}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {j.jobType}
+                            {j.openings ? ` · ${j.openings} opening${j.openings > 1 ? "s" : ""}` : ""}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-1 sm:hidden">
+                            {appCount} application{appCount === 1 ? "" : "s"}
+                          </p>
+                        </button>
+                      </td>
+                      <td className="px-4 py-4 text-slate-600 hidden md:table-cell">
+                        {[j.city, j.area].filter(Boolean).join(", ") || "—"}
+                      </td>
+                      <td className="px-4 py-4 text-center hidden sm:table-cell">
+                        <span className="inline-flex min-w-[2rem] justify-center rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-semibold text-slate-800">
+                          {appCount}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[j.status] || statusStyles.draft}`}
+                        >
+                          {j.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-slate-500 hidden sm:table-cell whitespace-nowrap">
+                        {formatDate(j.updatedAt)}
+                      </td>
+                      <td className="px-4 py-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                        <div className="inline-flex flex-wrap items-center justify-end gap-2">
                           <button
                             type="button"
-                            onClick={() => navigate(`/dashboard/jobs/${j.id}/edit`)}
+                            onClick={(e) => goToApplicants(j.id, e)}
                             className="text-[#2563EB] font-semibold hover:underline text-xs sm:text-sm"
                           >
-                            {j.status === "draft" ? "Continue" : "Edit"}
+                            Applicants
                           </button>
-                        ) : null}
-                        {j.status === "published" ? (
-                          <button
-                            type="button"
-                            disabled={busyId === j.id}
-                            onClick={() => handleClose(j.id)}
-                            className="text-slate-600 font-medium hover:text-slate-900 text-xs sm:text-sm disabled:opacity-50"
-                          >
-                            {busyId === j.id ? "Closing…" : "Close"}
-                          </button>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {j.status !== "closed" ? (
+                            <button
+                              type="button"
+                              onClick={() => navigate(`/dashboard/jobs/${j.id}/edit`)}
+                              className="text-[#2563EB] font-semibold hover:underline text-xs sm:text-sm"
+                            >
+                              {j.status === "draft" ? "Continue" : "Edit"}
+                            </button>
+                          ) : null}
+                          {j.status === "published" ? (
+                            <button
+                              type="button"
+                              disabled={busyId === j.id}
+                              onClick={() => handleClose(j.id)}
+                              className="text-slate-600 font-medium hover:text-slate-900 text-xs sm:text-sm disabled:opacity-50"
+                            >
+                              {busyId === j.id ? "Closing…" : "Close"}
+                            </button>
+                          ) : null}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

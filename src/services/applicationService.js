@@ -30,3 +30,8 @@ export async function updateApplicationStatus(applicationId, status) {
   });
   return data;
 }
+
+export async function updateApplicationInterview(applicationId, body) {
+  const { data } = await api.patch(`/employer/applications/${applicationId}/interview`, body);
+  return data;
+}
