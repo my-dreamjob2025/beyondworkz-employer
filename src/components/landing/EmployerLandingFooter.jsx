@@ -1,9 +1,32 @@
+import { Link } from "react-router-dom";
 import brandLogo from "../../assets/logos/beyond-workz-logo.png";
 import { BrandWordmark } from "../brand/BrandMark";
 import LinkedinIcon from "../../assets/icons/common-icon/linkedin.svg";
 import TwitterIcon from "../../assets/icons/common-icon/twitter.svg";
 import FacebookIcon from "../../assets/icons/common-icon/facebook.svg";
-import { FOOTER_LINKS } from "../../data/landingPageData";
+import { employeePublicUrls, employerAppPaths } from "../../constants/appUrls";
+
+const seekerLinks = [
+  { label: "Browse Jobs", href: employeePublicUrls.jobs },
+  { label: "Browse Companies", href: employeePublicUrls.companies },
+  { label: "Salary Calculator", href: employeePublicUrls.salaryCalculator },
+  { label: "Resume Builder", href: employeePublicUrls.resumeBuilder },
+];
+
+const employerLinks = [
+  { label: "Post a Job", to: employerAppPaths.postJob },
+  { label: "Browse Candidates", to: employerAppPaths.browseCandidates },
+  { label: "Pricing Plans", to: employerAppPaths.pricing },
+  { label: "Employer Dashboard", to: employerAppPaths.dashboard },
+];
+
+const companyLinks = [
+  { label: "About Us", href: employeePublicUrls.about },
+  { label: "Mission", href: employeePublicUrls.mission },
+  { label: "Careers", href: employeePublicUrls.careers },
+  { label: "Privacy Policy", href: employeePublicUrls.privacy },
+  { label: "Terms of Service", href: employeePublicUrls.terms },
+];
 
 /**
  * Matches the job seeker (employee) panel footer: dark band, four columns, social icons.
@@ -32,10 +55,15 @@ const EmployerLandingFooter = () => {
           <div>
             <p className="text-white font-semibold mb-5">For Job Seekers</p>
             <ul className="space-y-3 text-sm">
-              {FOOTER_LINKS.jobSeekers.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-white transition">
-                    {item}
+              {seekerLinks.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -45,11 +73,11 @@ const EmployerLandingFooter = () => {
           <div>
             <p className="text-white font-semibold mb-5">For Employers</p>
             <ul className="space-y-3 text-sm">
-              {FOOTER_LINKS.employers.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-white transition">
-                    {item}
-                  </a>
+              {employerLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="hover:text-white transition">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -58,10 +86,15 @@ const EmployerLandingFooter = () => {
           <div>
             <p className="text-white font-semibold mb-5">Company</p>
             <ul className="space-y-3 text-sm">
-              {FOOTER_LINKS.company.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-white transition">
-                    {item}
+              {companyLinks.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -73,9 +106,15 @@ const EmployerLandingFooter = () => {
           <p>© {new Date().getFullYear()} Beyond Workz. All rights reserved.</p>
 
           <div className="flex items-center gap-5">
-            <img src={LinkedinIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
-            <img src={TwitterIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
-            <img src={FacebookIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <img src={LinkedinIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <img src={TwitterIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <img src={FacebookIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
+            </a>
           </div>
         </div>
       </div>

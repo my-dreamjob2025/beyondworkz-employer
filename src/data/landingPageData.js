@@ -95,8 +95,3 @@ export const EMPLOYER_BRAND_BULLETS = [
   "Custom brand colors and imagery",
 ];
 
-export const FOOTER_LINKS = {
-  jobSeekers: ["Browse Jobs", "Browse Companies", "Salary Calculator", "Resume Builder"],
-  employers: ["Post a Job", "Browse Candidates", "Pricing Plans", "Employer Dashboard"],
-  company: ["About Us", "Careers", "Privacy Policy", "Terms of Service"],
-};
