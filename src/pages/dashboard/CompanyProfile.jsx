@@ -1,11 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useAuth from "../../hooks/useAuth";
 import { employerService } from "../../services/employerService";
+import { employerDocumentService } from "../../services/employerDocumentService";
 import {
   EMPLOYER_COMPANY_SIZE_OPTIONS,
   EMPLOYER_EMPLOYMENT_TYPES,
   EMPLOYER_RESPONSE_SLAS,
 } from "../../constants/employerFormOptions";
+import {
+  employerCanPostJobs,
+  employerProfileLockedForEdits,
+  employerVerificationLabel,
+} from "../../utils/employerVerification";
 const emptyRecruiter = () => ({
   firstName: "",
   lastName: "",
@@ -23,10 +29,28 @@ const CompanyProfile = () => {
   const [success, setSuccess] = useState("");
 
   const [companyName, setCompanyName] = useState("");
+  const [legalBusinessName, setLegalBusinessName] = useState("");
   const [industryType, setIndustryType] = useState("");
   const [companySize, setCompanySize] = useState("11-50");
   const [headquarters, setHeadquarters] = useState("");
   const [description, setDescription] = useState("");
+
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [addrCity, setAddrCity] = useState("");
+  const [addrState, setAddrState] = useState("");
+  const [addrPincode, setAddrPincode] = useState("");
+  const [addrCountry, setAddrCountry] = useState("India");
+
+  const [verificationDocs, setVerificationDocs] = useState(null);
+  const [profileStatus, setProfileStatus] = useState("pending");
+  const [companyVerified, setCompanyVerified] = useState(false);
+  const [adminQuery, setAdminQuery] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [submittingVerification, setSubmittingVerification] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState(null);
+  const coiInputRef = useRef(null);
+  const panInputRef = useRef(null);
 
   const [defaultJobLocation, setDefaultJobLocation] = useState("");
   const [defaultEmploymentType, setDefaultEmploymentType] = useState("Full Time");
@@ -56,10 +80,25 @@ const CompanyProfile = () => {
       const team = Array.isArray(c.recruiters) && c.recruiters.length > 0 ? c.recruiters : [emptyRecruiter()];
 
       setCompanyName(cd.companyName || "");
+      setLegalBusinessName(cd.legalBusinessName || "");
       setIndustryType(cd.industryType || "");
       setCompanySize(cd.companySize || "11-50");
       setHeadquarters(cd.headquarters || "");
       setDescription(cd.description || "");
+
+      const ad = c.address || {};
+      setAddressLine1(ad.addressLine1 || "");
+      setAddressLine2(ad.addressLine2 || "");
+      setAddrCity(ad.city || "");
+      setAddrState(ad.state || "");
+      setAddrPincode(ad.pincode || "");
+      setAddrCountry(ad.country || "India");
+
+      setVerificationDocs(c.verificationDocuments || null);
+      setProfileStatus(c.profileStatus || "pending");
+      setCompanyVerified(!!c.verified);
+      setAdminQuery(c.adminQuery || "");
+      setRejectionReason(c.rejectionReason || "");
 
       setDefaultJobLocation(hp.defaultJobLocation || "");
       setDefaultEmploymentType(hp.defaultEmploymentType || "Full Time");
@@ -101,10 +140,19 @@ const CompanyProfile = () => {
       const res = await employerService.updateCompanyProfile({
         companyDetails: {
           companyName,
+          legalBusinessName,
           industryType,
           companySize,
           headquarters,
           description,
+        },
+        address: {
+          addressLine1,
+          addressLine2,
+          city: addrCity,
+          state: addrState,
+          pincode: addrPincode,
+          country: addrCountry,
         },
         hiringPreferences: {
           defaultJobLocation,
@@ -144,6 +192,14 @@ const CompanyProfile = () => {
             companyProfile: res.companyProfile,
           });
         }
+        if (res.companyProfile) {
+          const cp = res.companyProfile;
+          setVerificationDocs(cp.verificationDocuments || null);
+          setProfileStatus(cp.profileStatus || "pending");
+          setCompanyVerified(!!cp.verified);
+          setAdminQuery(cp.adminQuery || "");
+          setRejectionReason(cp.rejectionReason || "");
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to save company profile.");
@@ -175,6 +231,75 @@ const CompanyProfile = () => {
     });
   };
 
+  const lockedForEdits = employerProfileLockedForEdits({ profileStatus });
+  const isVerifiedEmployer = employerCanPostJobs({
+    verified: companyVerified,
+    profileStatus,
+  });
+
+  const handleDocSelected = async (docType, e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (lockedForEdits) {
+      setError("Your profile is under admin review. You cannot change documents until the review is complete.");
+      return;
+    }
+    setUploadingDoc(docType);
+    setError("");
+    try {
+      const res = await employerDocumentService.uploadDocument(docType, file);
+      if (res.success && res.verificationDocuments) {
+        setVerificationDocs(res.verificationDocuments);
+        const me = await employerService.getMe();
+        if (me.success && me.companyProfile) {
+          updateUserFields({ companyProfile: me.companyProfile });
+          setVerificationDocs(me.companyProfile.verificationDocuments);
+          setProfileStatus(me.companyProfile.profileStatus || profileStatus);
+          setCompanyVerified(!!me.companyProfile.verified);
+        }
+        setSuccess("Document uploaded. Save your profile if you changed other fields, then submit for verification when ready.");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Upload failed.");
+    } finally {
+      setUploadingDoc(null);
+    }
+  };
+
+  const handleSubmitVerification = async () => {
+    setSubmittingVerification(true);
+    setError("");
+    setSuccess("");
+    try {
+      const res = await employerService.submitVerification();
+      if (res.success && res.companyProfile) {
+        const cp = res.companyProfile;
+        setProfileStatus(cp.profileStatus || "pending_review");
+        setVerificationDocs(cp.verificationDocuments || verificationDocs);
+        setAdminQuery(cp.adminQuery || "");
+        setRejectionReason(cp.rejectionReason || "");
+        updateUserFields({ companyProfile: cp });
+        setCompanyVerified(!!cp.verified);
+        setSuccess(res.message || "Submitted for verification.");
+      } else {
+        setError(res.message || "Could not submit.");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Submit failed.");
+    } finally {
+      setSubmittingVerification(false);
+    }
+  };
+
+  const coiMeta = verificationDocs?.certificateOfIncorporation;
+  const panMeta = verificationDocs?.companyPanCard;
+  const canSubmitForReview =
+    !lockedForEdits &&
+    profileStatus !== "pending_review" &&
+    profileStatus !== "approved" &&
+    profileStatus !== "suspended";
+
   return (
     <div className="space-y-8">
       <div>
@@ -197,6 +322,113 @@ const CompanyProfile = () => {
             </div>
           )}
 
+          <div
+            className={`rounded-xl border p-6 shadow-sm space-y-4 ${
+              isVerifiedEmployer
+                ? "bg-emerald-50/80 border-emerald-200"
+                : "bg-amber-50/90 border-amber-200"
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Company verification</p>
+                <p className="text-sm text-slate-600 mt-1">
+                  {employerVerificationLabel(profileStatus)}
+                  {isVerifiedEmployer
+                    ? " — you can post and manage jobs."
+                    : " — upload your registration certificate and company PAN, complete your details, then submit for admin review."}
+                </p>
+              </div>
+            </div>
+            {adminQuery ? (
+              <div className="rounded-lg bg-white border border-amber-300 p-3 text-sm text-amber-950">
+                <p className="font-semibold text-amber-900 mb-1">Message from admin</p>
+                <p className="whitespace-pre-wrap">{adminQuery}</p>
+              </div>
+            ) : null}
+            {rejectionReason ? (
+              <div className="rounded-lg bg-white border border-red-200 p-3 text-sm text-red-900">
+                <p className="font-semibold mb-1">Verification declined</p>
+                <p className="whitespace-pre-wrap">{rejectionReason}</p>
+              </div>
+            ) : null}
+            {lockedForEdits ? (
+              <p className="text-sm text-slate-700">
+                Your updates are locked while an administrator reviews your submission.
+              </p>
+            ) : null}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-lg border border-slate-200 bg-white p-4 space-y-2">
+                <p className="text-xs font-semibold text-slate-500 uppercase">
+                  Certificate of incorporation / registration
+                </p>
+                <p className="text-xs text-slate-500">PDF or image, max 10MB</p>
+                {coiMeta?.fileName || coiMeta?.key ? (
+                  <p className="text-sm text-emerald-800 font-medium truncate" title={coiMeta.fileName}>
+                    {coiMeta.fileName || "Uploaded"}
+                  </p>
+                ) : (
+                  <p className="text-sm text-slate-500">Not uploaded</p>
+                )}
+                <input
+                  ref={coiInputRef}
+                  type="file"
+                  accept=".pdf,image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  disabled={lockedForEdits}
+                  onChange={(e) => handleDocSelected("coi", e)}
+                />
+                <button
+                  type="button"
+                  disabled={lockedForEdits || uploadingDoc === "coi"}
+                  onClick={() => coiInputRef.current?.click()}
+                  className="text-sm font-semibold text-[#2563EB] hover:underline disabled:opacity-50 disabled:no-underline"
+                >
+                  {uploadingDoc === "coi" ? "Uploading…" : coiMeta?.key ? "Replace file" : "Upload file"}
+                </button>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-white p-4 space-y-2">
+                <p className="text-xs font-semibold text-slate-500 uppercase">Company PAN card</p>
+                <p className="text-xs text-slate-500">PDF or image, max 10MB</p>
+                {panMeta?.fileName || panMeta?.key ? (
+                  <p className="text-sm text-emerald-800 font-medium truncate" title={panMeta.fileName}>
+                    {panMeta.fileName || "Uploaded"}
+                  </p>
+                ) : (
+                  <p className="text-sm text-slate-500">Not uploaded</p>
+                )}
+                <input
+                  ref={panInputRef}
+                  type="file"
+                  accept=".pdf,image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  disabled={lockedForEdits}
+                  onChange={(e) => handleDocSelected("pan", e)}
+                />
+                <button
+                  type="button"
+                  disabled={lockedForEdits || uploadingDoc === "pan"}
+                  onClick={() => panInputRef.current?.click()}
+                  className="text-sm font-semibold text-[#2563EB] hover:underline disabled:opacity-50 disabled:no-underline"
+                >
+                  {uploadingDoc === "pan" ? "Uploading…" : panMeta?.key ? "Replace file" : "Upload file"}
+                </button>
+              </div>
+            </div>
+
+            {canSubmitForReview ? (
+              <button
+                type="button"
+                onClick={handleSubmitVerification}
+                disabled={submittingVerification}
+                className="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-[#0D3388] rounded-full hover:bg-[#0a2766] disabled:opacity-60"
+              >
+                {submittingVerification ? "Submitting…" : "Submit profile for verification"}
+              </button>
+            ) : null}
+          </div>
+
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
             <div>
               <p className="text-sm font-semibold text-slate-900">Company Details</p>
@@ -215,7 +447,21 @@ const CompanyProfile = () => {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Enter company name"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">
+                  Legal / registered business name
+                </label>
+                <input
+                  type="text"
+                  value={legalBusinessName}
+                  onChange={(e) => setLegalBusinessName(e.target.value)}
+                  placeholder="As on incorporation documents"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
                 />
               </div>
               <div>
@@ -227,7 +473,8 @@ const CompanyProfile = () => {
                   value={industryType}
                   onChange={(e) => setIndustryType(e.target.value)}
                   placeholder="e.g. Technology, Manufacturing"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
                 />
               </div>
               <div>
@@ -237,7 +484,8 @@ const CompanyProfile = () => {
                 <select
                   value={companySize}
                   onChange={(e) => setCompanySize(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
                 >
                   {EMPLOYER_COMPANY_SIZE_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -255,7 +503,8 @@ const CompanyProfile = () => {
                   value={headquarters}
                   onChange={(e) => setHeadquarters(e.target.value)}
                   placeholder="City, Country"
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
                 />
               </div>
             </div>
@@ -269,11 +518,82 @@ const CompanyProfile = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your mission, products and what makes your culture unique..."
-                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                disabled={lockedForEdits}
+                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
               />
               <p className="mt-1 text-xs text-slate-400">
                 A clear description helps candidates understand why they should work with you.
               </p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
+            <div>
+              <p className="text-sm font-semibold text-slate-900">Registered business address</p>
+              <p className="text-sm text-slate-500 mt-1">Required for verification. Use the address on your company documents.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">Address line 1</label>
+                <input
+                  type="text"
+                  value={addressLine1}
+                  onChange={(e) => setAddressLine1(e.target.value)}
+                  placeholder="Building, street"
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">Address line 2 (optional)</label>
+                <input
+                  type="text"
+                  value={addressLine2}
+                  onChange={(e) => setAddressLine2(e.target.value)}
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">City</label>
+                <input
+                  type="text"
+                  value={addrCity}
+                  onChange={(e) => setAddrCity(e.target.value)}
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">State / UT</label>
+                <input
+                  type="text"
+                  value={addrState}
+                  onChange={(e) => setAddrState(e.target.value)}
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">PIN code</label>
+                <input
+                  type="text"
+                  value={addrPincode}
+                  onChange={(e) => setAddrPincode(e.target.value)}
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 uppercase mb-1">Country</label>
+                <input
+                  type="text"
+                  value={addrCountry}
+                  onChange={(e) => setAddrCountry(e.target.value)}
+                  disabled={lockedForEdits}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent disabled:bg-slate-50"
+                />
+              </div>
             </div>
           </div>
 
@@ -505,10 +825,10 @@ const CompanyProfile = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || lockedForEdits}
               className="px-5 py-2.5 text-sm font-semibold text-white bg-[#2563EB] rounded-full hover:bg-[#1248C1] disabled:opacity-60"
             >
-              {saving ? "Saving…" : "Save Company Profile"}
+              {lockedForEdits ? "Review in progress…" : saving ? "Saving…" : "Save Company Profile"}
             </button>
           </div>
         </div>

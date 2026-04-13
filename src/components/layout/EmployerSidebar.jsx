@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { employerCanPostJobs } from "../../utils/employerVerification";
 
 const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useAuth();
   const creditBalance = user?.companyProfile?.creditBalance ?? user?.creditBalance ?? 0;
+  const mayPostJobs = employerCanPostJobs(user?.companyProfile);
   const [openGroups, setOpenGroups] = useState({
     Jobs: false,
     "Candidate Database": false,
@@ -282,19 +284,32 @@ const EmployerSidebar = ({ mobileOpen = false, onMobileOpenChange }) => {
               </button>
               {isOpen && (
                 <div className="ml-4 mt-1 space-y-0.5">
-                  {item.children.map((child) => (
-                    <button
-                      key={child.path}
-                      onClick={() => handleNavigate(child.path)}
-                      className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
-                        isActive(child.path)
-                          ? "text-[#2563EB] font-medium bg-blue-50"
-                          : "text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
-                      {child.label}
-                    </button>
-                  ))}
+                  {item.children.map((child) => {
+                    const blockPost =
+                      child.path === "/dashboard/jobs/new" && !mayPostJobs;
+                    return (
+                      <button
+                        key={child.path}
+                        type="button"
+                        title={
+                          blockPost
+                            ? "Complete company verification before posting jobs"
+                            : undefined
+                        }
+                        disabled={blockPost}
+                        onClick={() => !blockPost && handleNavigate(child.path)}
+                        className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
+                          blockPost
+                            ? "text-slate-400 cursor-not-allowed"
+                            : isActive(child.path)
+                              ? "text-[#2563EB] font-medium bg-blue-50"
+                              : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {child.label}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

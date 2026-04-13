@@ -15,4 +15,9 @@ export const employerService = {
     const { data } = await api.patch("/employer/company", body);
     return data;
   },
+
+  submitVerification: async () => {
+    const { data } = await api.post("/employer/company/submit-verification");
+    return data;
+  },
 };

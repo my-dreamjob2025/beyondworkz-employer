@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import StepHeader from "../../components/jobPosting/StepHeader";
 import StepperNav from "../../components/jobPosting/StepperNav";
 import BasicInfoStep from "../../components/jobPosting/steps/BasicInfoStep";
@@ -6,8 +8,20 @@ import SalaryStep from "../../components/jobPosting/steps/SalaryStep";
 import ScreeningStep from "../../components/jobPosting/steps/ScreeningStep";
 import PreviewStep from "../../components/jobPosting/steps/PreviewStep";
 import { useJobPostingForm } from "../../hooks/useJobPostingForm";
+import useAuth from "../../hooks/useAuth";
+import { employerCanPostJobs } from "../../utils/employerVerification";
 
 const PostNewJob = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const cp = user?.companyProfile;
+
+  useEffect(() => {
+    if (cp != null && !employerCanPostJobs(cp)) {
+      navigate("/dashboard/company-profile", { replace: true });
+    }
+  }, [cp, navigate]);
+
   const {
     job,
     setJob,
@@ -51,8 +65,17 @@ const PostNewJob = () => {
       <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3 text-slate-600">
         <div className="w-10 h-10 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
         <p className="text-sm">Loading job…</p>
-    </div>
+      </div>
   );
+  }
+
+  if (!cp) {
+    return (
+      <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3 text-slate-600">
+        <div className="w-10 h-10 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm">Loading profile…</p>
+      </div>
+    );
   }
 
   return (

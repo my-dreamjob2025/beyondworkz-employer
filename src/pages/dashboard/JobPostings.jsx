@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchEmployerJobs, patchJobStatus } from "../../services/jobPostingService";
+import useAuth from "../../hooks/useAuth";
+import { employerCanPostJobs } from "../../utils/employerVerification";
 
 const statusStyles = {
   draft: "bg-amber-50 text-amber-900 border-amber-200",
@@ -23,6 +25,8 @@ function formatDate(iso) {
 
 const JobPostings = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const mayPostJobs = employerCanPostJobs(user?.companyProfile);
   const [searchParams] = useSearchParams();
   const apiStatus = useMemo(() => {
     const raw = (searchParams.get("status") || "").toLowerCase();
@@ -97,8 +101,14 @@ const JobPostings = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate("/dashboard/jobs/new")}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 text-white font-semibold rounded-xl bg-[#2563EB] hover:bg-[#1248C1] transition-colors shadow-sm shrink-0"
+          disabled={!mayPostJobs}
+          title={
+            !mayPostJobs
+              ? "Complete company verification before posting jobs"
+              : undefined
+          }
+          onClick={() => mayPostJobs && navigate("/dashboard/jobs/new")}
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 text-white font-semibold rounded-xl bg-[#2563EB] hover:bg-[#1248C1] transition-colors shadow-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#2563EB]"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
